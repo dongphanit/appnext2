@@ -12,7 +12,7 @@ export PATH="$PATH:$HOME/flutter/bin"
 
 # Install Flutter artifacts for iOS (--ios), or macOS (--macos) platforms.
 flutter precache --ios
-pod repo update
+
 # Install Flutter dependencies.
 flutter pub get
 
@@ -22,5 +22,5 @@ brew install cocoapods
 
 # Install CocoaPods dependencies.
 cd ios && pod install # run `pod install` in the `ios` directory.
-
+pod repo update
 exit 0
