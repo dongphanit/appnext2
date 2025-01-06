@@ -47,7 +47,10 @@ dependencies:
   dots_indicator: 
   image_picker: 
   url_launcher: 
-  velocity_x: ^4.2.1
+  velocity_x:
+    git:
+      url: https://github.com/chihuy105/VelocityX.git
+      ref: stable
   internet_connection_checker: 
   connectivity_plus: 
   google_fonts:
