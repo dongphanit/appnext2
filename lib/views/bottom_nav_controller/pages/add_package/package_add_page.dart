@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,7 +19,7 @@ import '../../../../controllers/profile_controller.dart';
 import '../../../screens/home_screen.dart';
 
 class PackageAddPage extends StatefulWidget {
-  const PackageAddPage({Key? key}) : super(key: key);
+  const PackageAddPage({super.key});
 
   @override
   State<PackageAddPage> createState() => _PackageAddPageState();
@@ -78,7 +79,7 @@ class _PackageAddPageState extends State<PackageAddPage> {
         // upload to database
         uploadToDB();
       } else {
-        Get.snackbar("Error", "Something is wrong!",
+        Get.snackbar("Error", Localization.translate("something_is_wrong!"),
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
@@ -110,7 +111,7 @@ class _PackageAddPageState extends State<PackageAddPage> {
           //     FieldValue.arrayUnion(imageUrlList), //we create image list
         },
       ).whenComplete(() {
-        Get.snackbar("Successful", "Uploaded SUccessfully.");
+        Get.snackbar("Successful", Localization.translate("uploaded_successfully."));
       });
       Get.to(
         () => HomeScreen(),
@@ -129,13 +130,13 @@ class _PackageAddPageState extends State<PackageAddPage> {
               children: [
                 SizedBox(height: 20.h),
                 customTextField(
-                  "Owner Name".tr,
+                  Localization.translate("owner_name").tr,
                   nameController,
                   TextInputType.text,
                   onlyRead: true,
                 ),
                 customTextField(
-                  "Phone Number".tr,
+                  Localization.translate("phone_number").tr,
                   phoneController,
                   TextInputType.number,
                   onlyRead: true,
@@ -166,7 +167,7 @@ class _PackageAddPageState extends State<PackageAddPage> {
                   onlyRead: false,
                 ),
                 Text(
-                  "Select Image".tr,
+                  Localization.translate("select_image").tr,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 18.sp,
@@ -221,19 +222,19 @@ class _PackageAddPageState extends State<PackageAddPage> {
                       if (_descriptionController.text.isEmpty ||
                           _descriptionController.text.length < 3) {
                         Fluttertoast.showToast(
-                            msg: "description must be at least 3 character");
+                            msg: Localization.translate("description_must_be_at_least_3_character"));
                       } else if (_costController.text.isEmpty ||
                           _costController.text.length < 3) {
                         Fluttertoast.showToast(
-                            msg: "cost must be at least 3 character");
+                            msg: Localization.translate("cost_must_be_at_least_3_character"));
                       } else if (_facilityController.text.isEmpty ||
                           _facilityController.text.length < 3) {
                         Fluttertoast.showToast(
-                            msg: "facility must be at least 3 character");
+                            msg: Localization.translate("facility_must_be_at_least_3_character"));
                       } else if (_destinationController.text.isEmpty ||
                           _destinationController.text.length < 3) {
                         Fluttertoast.showToast(
-                            msg: "destination must be at least 3 character");
+                            msg: Localization.translate("destination_must_be_at_least_3_character"));
                       } else {
                         isLoading(true);
                         await uploadImages();

@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/constant/constant.dart';
@@ -33,10 +34,10 @@ class AuthController extends GetxController {
         );
         var authCredential = userCredential.user;
         if (authCredential!.uid.isNotEmpty) {
-          Get.snackbar("Successful", "Registration Successfull");
+          Get.snackbar("Successful", Localization.translate("registration_successfull"));
           Get.to(() => HomeScreen());
         } else {
-          Get.snackbar("Error", "Something is wrong!",
+          Get.snackbar("Error", Localization.translate("something_is_wrong!"),
               backgroundColor: Colors.red, colorText: Colors.white);
         }
         UserModel userModel = UserModel(
@@ -52,22 +53,22 @@ class AuthController extends GetxController {
             .doc(userCredential.user!.uid)
             .set(userModel.toJson());
       } else {
-        Get.snackbar("Error", "Please enter all the field!",
+        Get.snackbar("Error", Localization.translate("please_enter_all_the_field!"),
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        Get.snackbar("Error", "The password provided is too weak.",
+        Get.snackbar("Error", Localization.translate("the_password_provided_is_too_weak."),
             backgroundColor: Colors.red, colorText: Colors.white);
       } else if (e.code == 'email-already-in-use') {
-        Get.snackbar("Error", "The account already exists for that email.",
+        Get.snackbar("Error", Localization.translate("the_account_already_exists_for_that_email."),
             backgroundColor: Colors.red, colorText: Colors.white);
       } else if (e.code == 'invalid-email') {
-        Get.snackbar("Error", "Please write right email",
+        Get.snackbar("Error", Localization.translate("please_write_right_email"),
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      Get.snackbar("Error", "Error is: $e",
+      Get.snackbar("Error", Localization.translate("error_is:_$e"),
           backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
@@ -81,26 +82,26 @@ class AuthController extends GetxController {
 
         var authCredential = userCredential.user;
         if (authCredential!.uid.isNotEmpty) {
-          Get.snackbar("Successful", "successfully Login");
+          Get.snackbar("Successful", Localization.translate("successfully_login"));
           Get.to(() => HomeScreen());
         } else {
-          Get.snackbar("Error", "Something is wrong!",
+          Get.snackbar("Error", Localization.translate("something_is_wrong!"),
               backgroundColor: Colors.red, colorText: Colors.white);
         }
       } else {
-        Get.snackbar("Error", "Please enter all the field!",
+        Get.snackbar("Error", Localization.translate("please_enter_all_the_field!"),
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        Get.snackbar("Error", "No user found for that email.",
+        Get.snackbar("Error", Localization.translate("no_user_found_for_that_email."),
             backgroundColor: Colors.red, colorText: Colors.white);
       } else if (e.code == 'wrong-password') {
-        Get.snackbar("Error", "Wrong password provided for that user.",
+        Get.snackbar("Error", Localization.translate("wrong_password_provided_for_that_user."),
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      Get.snackbar("Error", "Error is: $e",
+      Get.snackbar("Error", Localization.translate("error_is:_$e"),
           backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
@@ -108,7 +109,7 @@ class AuthController extends GetxController {
   //for logout
   signOut() async {
     await firebaseAuth.signOut();
-    Fluttertoast.showToast(msg: 'Log out');
+    Fluttertoast.showToast(msg: Localization.translate("log_out"));
     Get.to(() => SignInScreen());
   }
 }

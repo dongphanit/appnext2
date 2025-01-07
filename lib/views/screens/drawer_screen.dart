@@ -13,7 +13,7 @@ import 'package:flutter_tour_app/views/drawer_page/support_screen.dart';
 import 'package:flutter_tour_app/views/widgets/drawer_item.dart';
 
 class DrawerScreen extends StatelessWidget {
-  DrawerScreen({Key? key}) : super(key: key);
+  DrawerScreen({super.key});
 
   final controller = Get.put(LanguageControler());
 

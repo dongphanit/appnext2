@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tour_app/constant/app_colors.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/constant/constant.dart';
 import 'package:flutter_tour_app/controllers/auth_controller.dart';
@@ -13,7 +14,7 @@ import 'package:flutter_tour_app/views/drawer_page/settings/profile_screen.dart'
 import '../../auth/login_screen.dart';
 
 class SettingScreen extends StatelessWidget {
-  SettingScreen({Key? key}) : super(key: key);
+  SettingScreen({super.key});
 
   RxBool darkMode = false.obs;
 
@@ -133,7 +134,7 @@ class SettingScreen extends StatelessWidget {
                                       FirestoreServices.deletePackage(
                                           docId: data.id);
                                       Get.snackbar(
-                                          "Successful", "Delete SUccessfully.");
+                                          "Successful", Localization.translate("delete_successfully."));
                                       Get.back();
                                     },
                                     child: Row(

@@ -4,6 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/constant/constant.dart';
 
+import '../localization/localization.dart';
+
 class ProfileController extends GetxController {
   var nameController = TextEditingController();
   var emailController = TextEditingController();
@@ -42,14 +44,14 @@ class ProfileController extends GetxController {
           })
           .then(
             (value) => Fluttertoast.showToast(
-                msg: "Updated Successfully", backgroundColor: Colors.black87),
+                msg: Localization.translate("updated_successfully"), backgroundColor: Colors.black87),
           )
           .then(
             (value) => Get.back(),
           );
     } catch (e) {
       Fluttertoast.showToast(
-          msg: "Something is wrong", backgroundColor: Colors.black87);
+          msg: Localization.translate("something_is_wrong"), backgroundColor: Colors.black87);
     }
   }
 }

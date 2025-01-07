@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/services/firestore_services.dart';
 import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/nav_home_screen.dart';
@@ -11,7 +12,7 @@ import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/nav_home
 import 'details_screen.dart';
 
 class EconomyAllScreen extends StatefulWidget {
-  const EconomyAllScreen({Key? key}) : super(key: key);
+  const EconomyAllScreen({super.key});
 
   @override
   State<EconomyAllScreen> createState() => _EconomyAllScreenState();
@@ -37,7 +38,7 @@ class _EconomyAllScreenState extends State<EconomyAllScreen> {
       backgroundColor: Color.fromARGB(255, 223, 231, 229),
       appBar: AppBar(
         title: Text(
-         "All Economy".tr,
+         Localization.translate("all_economy").tr,
          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
         ),
       ),

@@ -9,7 +9,7 @@ import 'package:velocity_x/velocity_x.dart';
 import '../../constant/app_strings.dart';
 
 class FaqScreen extends StatelessWidget {
-  const FaqScreen({Key? key}) : super(key: key);
+  const FaqScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

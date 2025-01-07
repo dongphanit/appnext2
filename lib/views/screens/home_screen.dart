@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter_tour_app/constant/constant.dart';
@@ -15,7 +16,7 @@ import 'package:flutter_tour_app/views/bottom_nav_controller/pages/bottom_nav_co
 import 'package:flutter_tour_app/views/screens/drawer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -58,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Are you sure to close this app?"),
+          title: Text(Localization.translate("are_you_sure_to_close_this_app?")),
           content: Row(
             children: [
               ElevatedButton(
@@ -100,8 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
   showDialogBox() => showCupertinoDialog<String>(
         context: context,
         builder: (BuildContext context) => CupertinoAlertDialog(
-          title: const Text('No Connection'),
-          content: const Text('Please check your internet connectivity'),
+          // title: const Text(Localization.translate("no_connection")),
+          // content: const Text(Localization.translate("please_check_your_internet_connectivity")),
           actions: [
             TextButton(
               onPressed: () async {

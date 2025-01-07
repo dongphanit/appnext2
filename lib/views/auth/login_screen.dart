@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -90,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               SizedBox(height: 10.h),
               Text(
-                "Login\nTo Your Account",
+                Localization.translate("login\nto_your_account"),
                 style: TextStyle(
                   fontSize: 30.sp,
                   fontWeight: FontWeight.w700,
@@ -109,7 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: AppStyle()
-                    .textFieldDecoration("Enter your email", Icons.mail),
+                    .textFieldDecoration(Localization.translate("enter_your_email"), Icons.mail),
               ),
               SizedBox(
                 height: 20.h,
@@ -195,7 +196,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   children: [
                     TextSpan(
-                      text: "Sign Up",
+                      text:  "Sign Up",
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -217,8 +218,8 @@ class _SignInScreenState extends State<SignInScreen> {
   showDialogBox() => showCupertinoDialog<String>(
         context: context,
         builder: (BuildContext context) => CupertinoAlertDialog(
-          title: const Text('No Connection'),
-          content: const Text('Please check your internet connectivity'),
+          title: const Text('No ConnectionLocalization.translate'),
+
           actions: [
             TextButton(
               onPressed: () async {

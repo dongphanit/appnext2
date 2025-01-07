@@ -10,7 +10,7 @@ import '../../../../services/firestore_services.dart';
 import 'details_screen.dart';
 
 class SelfTourScreen extends StatelessWidget {
-  const SelfTourScreen({Key? key}) : super(key: key);
+  const SelfTourScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

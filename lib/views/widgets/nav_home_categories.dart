@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 
 Widget navHomeCategories(String categoryName, onClick) {
   return Padding(
@@ -16,7 +17,7 @@ Widget navHomeCategories(String categoryName, onClick) {
         InkWell(
           onTap: onClick,
           child: Text(
-            "See More",
+            Localization.translate("see_more"),
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600,color: Color(0xFF2BA018)),
           ),
         ),

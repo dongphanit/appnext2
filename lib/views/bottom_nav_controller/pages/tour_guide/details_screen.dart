@@ -5,7 +5,7 @@ import 'package:velocity_x/velocity_x.dart';
 
 class SelfTourDetailsScreen extends StatelessWidget {
   final dynamic data;
-  const SelfTourDetailsScreen({Key? key, required this.data}) : super(key: key);
+  const SelfTourDetailsScreen({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {

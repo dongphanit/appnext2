@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 // import 'package:flutter_tour_app/constant/app_strings.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/constant/constant.dart';
@@ -9,8 +10,8 @@ import '../../../constant/app_colors.dart';
 import 'package:flutter_tour_app/views/auth/login_screen.dart';
 class BottomNavControllerScreen extends StatelessWidget {
   BottomNavControllerScreen({super.key});
-  RxInt _currentIndex = 0.obs;
-  RxBool _drawer = false.obs;
+  final RxInt _currentIndex = 0.obs;
+  final RxBool _drawer = false.obs;
 
 
   void _onTabTapped(int index) {
@@ -36,8 +37,8 @@ class BottomNavControllerScreen extends StatelessWidget {
       context: Get.context!,
       builder: (context) {
         return AlertDialog(
-          title: Text("Login Required"),
-          content: Text("You must be logged in to access this section."),
+          title: Text(Localization.translate("login_required")),
+          content: Text(Localization.translate("you_must_be_logged_in_to_access_this_section.")),
           actions: [
             TextButton(
               onPressed: () {
@@ -103,7 +104,7 @@ class BottomNavControllerScreen extends StatelessWidget {
               actions: [
                 Center(
                   child: Text(
-                    intl.DateFormat('EEE, MMM d, ' 'yy').format(DateTime.now()),
+                    intl.DateFormat("eee,_mmm_d,_").format(DateTime.now()),
                     style:
                         TextStyle(color: AppColors.textColor, fontSize: 18.sp),
                   ),

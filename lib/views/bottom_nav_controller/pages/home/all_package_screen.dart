@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tour_app/constant/app_colors.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/constant/constant.dart';
 import 'package:flutter_tour_app/services/firestore_services.dart';
@@ -51,7 +52,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
       backgroundColor: AppColors.scaffoldColor,
       appBar: AppBar(
         title: Text(
-          "All Package".tr,
+          Localization.translate("all_package").tr,
           style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
         ),
       ),

@@ -8,7 +8,7 @@ import 'package:flutter_tour_app/controllers/profile_controller.dart';
 import 'package:flutter_tour_app/views/widgets/violetButton.dart';
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({Key? key}) : super(key: key);
+  ProfileScreen({super.key});
 
   var controller = Get.put(ProfileController());
 

@@ -2,20 +2,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../constant/app_strings.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
-  const PrivacyPolicyScreen({Key? key}) : super(key: key);
+  const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Text(
-        "Privacy Policy".tr,
+        Localization.translate("privacy_policy").tr,
         style: TextStyle(fontSize: 25.sp),
       )),
       body: Padding(

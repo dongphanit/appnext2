@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 
 import '../../constant/app_colors.dart';
 
@@ -40,7 +41,7 @@ class VioletButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Please Wait",
+                    Localization.translate("please_wait"),
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 18.sp,

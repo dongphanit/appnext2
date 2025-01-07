@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:flutter_tour_app/views/drawer_page/languages/bangla.dart';
-import 'package:flutter_tour_app/views/drawer_page/languages/english.dart';
+import 'package:flutter_tour_app/localization/bangla.dart';
+import 'package:flutter_tour_app/localization/english.dart';
 
 class AppLanguages extends Translations{
 
