@@ -1,135 +1,271 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_tour_app/constant/app_colors.dart';
-import 'package:get/get.dart';
-import 'package:flutter_tour_app/views/widgets/details_heading_description.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:velocity_x/velocity_x.dart';
+import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/payment_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' as parser;
 
-class DetailsScreen extends StatefulWidget {
-  final Map detailsData;
-  const DetailsScreen({super.key, required this.detailsData});
+class ProductDetailsScreen extends StatefulWidget {
+  late String productUrl;
+  ProductDetailsScreen({required this.productUrl, Key? key}) : super(key: key);
 
   @override
-  State<DetailsScreen> createState() => _DetailsScreenState();
+  _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
 }
 
-class _DetailsScreenState extends State<DetailsScreen> {
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  String productName = "Loading...";
+  String price = "Loading...";
+  String productDescription = "Loading...";
+  String productImg = "Loading...";
+  String priceDiscount = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProductDetails();
+  }
+
+  // Hàm lấy dữ liệu sản phẩm
+  Future<void> fetchProductDetails() async {
+    // URL của sản phẩm trên Flipkart
+    final url = widget.productUrl;
+    // Gửi yêu cầu GET
+    final response = await http.get(Uri.parse(url), headers: {
+      // "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+    });
+
+    // Nếu yêu cầu thành công
+    if (response.statusCode == 200) {
+      // Phân tích HTML
+      var document = parser.parse(response.body);
+
+      // Lấy tên sản phẩm
+      var nameElement = document.querySelector("span.mEh187");
+      setState(() {
+        productName = nameElement != null ? nameElement.text.trim() : "N/A";
+      });
+
+      // Lấy giá sản phẩm
+      var priceElement = document.querySelector("div.Nx9bqj.CxhGGd");
+      var descriptionElement = document.querySelector("span.VU-ZEz");
+      var imageElement  = document.querySelector("img._53J4C- utBuJY");
+      
+      print(imageElement?.attributes['src'] ?? "N/A");
+      setState(() {
+        price = priceElement != null ? priceElement.text.trim() : "N/A";
+        if (priceElement != null) {
+          price = priceElement.text.trim();
+          double originalPrice = double.tryParse(price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0;
+          double discountPrice = originalPrice * 0.9;
+          priceDiscount = "₹${discountPrice.toStringAsFixed(2)}";
+        } else {
+          price = "N/A";
+          priceDiscount = "N/A";
+        }
+        productDescription = descriptionElement != null ? descriptionElement.text.trim() : "N/A";
+        productImg = imageElement != null ? imageElement.attributes['src'] ?? "N/A" : "N/A";
+      });
+    } else {
+      setState(() {
+        productName = "Failed to load product.";
+        price = "N/A";
+        productDescription= "";
+        productImg = "";
+        priceDiscount = "";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('Product Details'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_border),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 7,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    //show slider
-                    VxSwiper.builder(
-                      autoPlay: true,
-                      enlargeCenterPage: true,
-                      height: 200,
-                      aspectRatio: 16 / 9,
-                      viewportFraction: 1.0,
-                      itemCount: widget.detailsData['list_images'].length,
-                      itemBuilder: (context, index) {
-                        return CachedNetworkImage(
-                  imageUrl:widget.detailsData['list_images'][0],
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                  filterQuality: FilterQuality.high,
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.blue,
+            // Product Image Carousel
+            SizedBox(
+              height: 300,
+              child: PageView(
+                children: [
+                  Image.network(
+                    productImg,
+                       fit: BoxFit.cover,
+                  ),
+                 
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Product Title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                productName, // Sử dụng tên sản phẩm đã lấy được
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Product Ratings and Price
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            //   child: Row(
+            //     children: [
+            //       Container(
+            //         padding:
+            //             const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            //         decoration: BoxDecoration(
+            //           color: Colors.green,
+            //           borderRadius: BorderRadius.circular(4),
+            //         ),
+            //         child: const Text(
+            //           '4.2 ★', // Placeholder for rating
+            //           style: TextStyle(color: Colors.white),
+            //         ),
+            //       ),
+            //       const SizedBox(width: 10),
+            //       const Text(
+            //         '1,245 Ratings & 150 Reviews',
+            //         style: TextStyle(color: Colors.grey, fontSize: 14),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            const SizedBox(height: 8),
+
+            // Price
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Text(
+                    price, // Hiển thị giá đã lấy được
+                     style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      decoration: TextDecoration.lineThrough,
+                    ),
+                   
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    priceDiscount, // Placeholder for original price
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                );
+                  const SizedBox(width: 10),
+                  const Text(
+                    '10% off',
+                    style: TextStyle(fontSize: 16, color: Colors.green),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Product Description
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: const Text(
+                'Product Description',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                productDescription, // Hiển thị mô tả sản phẩm đã lấy được
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Add to Cart and Buy Now Buttons
+            Row(
+              children: [
+                // Expanded(
+                //   child: Container(
+                //     margin: const EdgeInsets.all(8.0),
+                //     child: ElevatedButton(
+                //       onPressed: () {},
+                //       style: ElevatedButton.styleFrom(
+                //         backgroundColor: Colors.orange,
+                //         padding: const EdgeInsets.all(16),
+                //       ),
+                //       child: const Text(
+                //         'ADD TO CART',
+                //         style: TextStyle(fontSize: 16),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PaymentScreen(),
+                          ),
+                        );
                       },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          widget.detailsData['list_destination']
-                              .toString()
-                              .text
-                              .size(22.sp)
-                              .fontWeight(FontWeight.w700)
-                              .make(),
-                          "${widget.detailsData['list_cost']} BDT"
-                              .text
-                              .color(Colors.green)
-                              .fontWeight(FontWeight.w500)
-                              .size(18.sp)
-                              .make(),
-                          15.h.heightBox,
-                          detailsHeadingDescription(
-                            title: "Description".tr,
-                            description: widget.detailsData['list_description'],
-                          ),
-                          detailsHeadingDescription(
-                            title: "Facilites".tr,
-                            description: widget.detailsData['list_facilities'],
-                          ),
-                        ],
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.all(16),
+                      ),
+                      child: const Text(
+                        'BUY NOW',
+                        style: TextStyle(fontSize: 16),
                       ),
                     ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+
+            // Additional Information
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: const Text(
+                'Highlights',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                color: AppColors.scaffoldColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      widget.detailsData['list_owner_name'],
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20.sp,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            launchUrl(
-                              Uri.parse(
-                                  "tel: ${widget.detailsData['list_phone']}"),
-                            );
-                          },
-                          icon: Icon(Icons.call_outlined),
-                        ),
-                        SizedBox(
-                          width: 20.w,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            launchUrl(
-                              Uri.parse(
-                                  "sms:${widget.detailsData['list_phone']}"),
-                            );
-                          },
-                          icon: Icon(Icons.message_outlined),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            //   child: const Text(
+            //     '- 1.5 L Capacity\n- Stainless Steel Material\n- Automatic Shut-off\n- Lightweight Design',
+            //     style: TextStyle(fontSize: 16),
+            //   ),
+            // ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

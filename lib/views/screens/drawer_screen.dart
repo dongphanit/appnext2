@@ -1,14 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tour_app/constant/app_colors.dart';
 import 'package:flutter_tour_app/constant/app_strings.dart';
+import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/controllers/language_controller.dart';
 import 'package:flutter_tour_app/views/drawer_page/faq_screen.dart';
 import 'package:flutter_tour_app/views/drawer_page/privacy_policy_screen.dart';
-import 'package:flutter_tour_app/views/drawer_page/settings/settings_screen.dart';
 import 'package:flutter_tour_app/views/drawer_page/support_screen.dart';
 import 'package:flutter_tour_app/views/widgets/drawer_item.dart';
 
@@ -68,6 +69,7 @@ class DrawerScreen extends StatelessWidget {
                             onChanged: (value) {
                               controller.changeLanguage(value);
                               Get.updateLocale(const Locale('bn', 'BD'));
+                              Localization.setLanguage(Get.locale?.languageCode??"en");
                             },
                           ),
                           Text("Bangla".tr),
@@ -83,6 +85,7 @@ class DrawerScreen extends StatelessWidget {
                             onChanged: (value) {
                               controller.changeLanguage(value);
                               Get.updateLocale(const Locale('en', 'US'));
+                              Localization.setLanguage(Get.locale?.languageCode??"en");
                             },
                           ),
                           Text("English".tr),
@@ -94,7 +97,7 @@ class DrawerScreen extends StatelessWidget {
               ),
               Expanded(child: SizedBox()),
               InkWell(
-                onTap: () => Get.to(() => SettingScreen()),
+                onTap: () => Get.to(() => Settings()),
                 child: Text(
                   "Settings".tr,
                   style:
