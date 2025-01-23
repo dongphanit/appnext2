@@ -211,58 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 10.h,
               ),
               // !----------------------address Field------------------------
-              Container(
-                height: 70.h,
-                decoration: BoxDecoration(
-                  // Background color of the container
-                  border: Border.all(
-                    // Border properties
-                    color: Colors.blueAccent, // Border color
-                    width: 1, // Border width
-                  ),
-                  borderRadius: BorderRadius.circular(
-                      10), // Border radius to make it rounded
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    hint: Text(
-                      'Bangladesh District',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.blueAccent,
-                      ),
-                    ),
-                    items: items
-                        .map((String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: TextStyle(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.blueAccent),
-                              ),
-                            ))
-                        .toList(),
-                    value: selectedValue,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedValue = value;
-                      });
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      height: 40,
-                      width: double.infinity,
-                    ),
-                    menuItemStyleData: MenuItemStyleData(
-                      height: 40.h,
-                    ),
-                  ),
-                ),
-              ),
+            
               SizedBox(
                 height: 30.h,
               ),
