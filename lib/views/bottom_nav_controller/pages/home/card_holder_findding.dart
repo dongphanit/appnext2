@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/waiting_screen.dart';
 
 class CardHolderFindingScreen extends StatefulWidget {
   final String orderId;
 
-  const CardHolderFindingScreen({Key? key, required this.orderId})
-      : super(key: key);
+  const CardHolderFindingScreen({super.key, required this.orderId});
 
   @override
   _CardHolderFindingScreenState createState() =>
@@ -29,13 +29,14 @@ class _CardHolderFindingScreenState extends State<CardHolderFindingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Finding Card Holder"),
+        title: const Text("Finding Card Holder"),
+        backgroundColor: Colors.deepPurple,
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: _orderStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -54,21 +55,32 @@ class _CardHolderFindingScreenState extends State<CardHolderFindingScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Payment Accepted!",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: Colors.green,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text("Card Holder ID: $cardHolderId"),
                     ElevatedButton(
                       onPressed: () {
-                        // Chuyển tới màn hình tiếp theo
-                        Navigator.pop(context);
+                        // Chuyển tới màn hình
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WaitingScreen(
+                              orderId: widget.orderId,
+                            ),
+                          ),
+                        );
                       },
-                      child: Text("Continue"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                      ),
+                      child: const Text("Continue"),
                     ),
                   ],
                 ),
@@ -77,21 +89,142 @@ class _CardHolderFindingScreenState extends State<CardHolderFindingScreen> {
               // Đang chờ card holder chấp nhận
               return Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 20),
-                    Text(
-                      "Finding the right card holder...",
-                      style: TextStyle(fontSize: 18),
+                    const SizedBox(height: 40),
+                    const Text(
+                      'Real time shopping',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple,
+                      ),
                     ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Outer Circle
+                            Container(
+                              width: 250,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue.withOpacity(0.1),
+                                    Colors.purple.withOpacity(0.1),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                            ),
+                            // Middle Circle
+                            Container(
+                              width: 200,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue.withOpacity(0.2),
+                                    Colors.purple.withOpacity(0.2),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                            ),
+                            // Inner Circle
+                            Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue.withOpacity(0.3),
+                                    Colors.purple.withOpacity(0.3),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                            ),
+                            // Center Avatar
+                            const CircleAvatar(
+                              radius: 30,
+                              backgroundImage: NetworkImage(
+                                  'https://via.placeholder.com/150'), // Replace with actual URL
+                            ),
+                            // Floating Avatars
+                            Positioned(
+                              top: 40,
+                              right: 10,
+                              child: const CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    'https://via.placeholder.com/100'), // Replace with actual URL
+                              ),
+                            ),
+                            Positioned(
+                              top: 180,
+                              left: 20,
+                              child: const CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    'https://via.placeholder.com/100'), // Replace with actual URL
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 40,
+                              right: 50,
+                              child: const CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    'https://via.placeholder.com/100'), // Replace with actual URL
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      'Finding the right card holder',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Please wait! This might take a few minutes.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40),
+                      child: LinearProgressIndicator(
+                        value: null, // Indeterminate progress bar
+                        color: Colors.deepPurple,
+                        backgroundColor: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 40),
                   ],
                 ),
               );
             }
           }
 
-          return Center(child: Text("No data available."));
+          return const Center(child: Text("No data available."));
         },
       ),
     );

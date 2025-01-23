@@ -15,28 +15,36 @@ Future<QuerySnapshot> getOrders({bool available = true}) async {
       .where('availability', isEqualTo: available)
       .get();
 }
-
-  // Function to create a new order in Firestore
-  Future<String> createOrder({
-    required String buyerId,
-    required String productLink,
-    required String shippingAddress,
-    required double amount,
-  }) async {
-    try {
-      DocumentReference orderRef = await _firestore.collection('orders').add({
-        'buyerId': buyerId,
-        'productLink': productLink,
-        'shippingAddress': shippingAddress,
-        'amount': amount,
-        'status': 'Pending',
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-      return orderRef.id;
-    } catch (e) {
-      throw Exception('Failed to create order: $e');
-    }
+// Function to create a new order in Firestore
+Future<String> createOrder({
+  required String buyerAddress,
+  required String buyerPhone,
+  required String cardHolderId,
+  required String productId,
+  required String productName,
+  required double productPrice,
+  required String productUrl,
+  required String userId,
+}) async {
+  try {
+    DocumentReference orderRef = await _firestore.collection('orders').add({
+      'buyer_address': buyerAddress,
+      'buyer_phone': buyerPhone,
+      'cardHolderId': cardHolderId,
+      'createdAt': FieldValue.serverTimestamp(),
+      'productId': productId,
+      'product_name': productName,
+      'product_price': productPrice,
+      'product_url': productUrl,
+      'status': 'pending',
+      'userId': userId,
+      'imageUrl': []
+    });
+    return orderRef.id;
+  } catch (e) {
+    throw Exception('Failed to create order: $e');
   }
+}
 
   // Function to fetch order details
   Future<Map<String, dynamic>?> getOrderDetails(String orderId) async {

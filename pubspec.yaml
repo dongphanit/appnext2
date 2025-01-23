@@ -58,7 +58,9 @@ dependencies:
   dropdown_button2: 
   http: ^1.2.1
   html: ^0.15.0
-  
+  pay: ^3.1.0
+  file_picker: ^5.0.0
+  firebase_storage_web: ^3.10.7
 
 dev_dependencies:
   flutter_test:

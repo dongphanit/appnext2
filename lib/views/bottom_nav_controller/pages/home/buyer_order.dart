@@ -1,29 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tour_app/constant/constant.dart';
 import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/verification_order.dart';
 
-class OrderListScreen extends StatefulWidget {
-  const OrderListScreen({Key? key}) : super(key: key);
+class BuyerOrderListScreen extends StatefulWidget {
+  const BuyerOrderListScreen({Key? key}) : super(key: key);
 
   @override
   OrderListScreenState createState() => OrderListScreenState();
 }
 
-class OrderListScreenState extends State<OrderListScreen> {
+class OrderListScreenState extends State<BuyerOrderListScreen> {
   final Stream<QuerySnapshot> _orderStream = FirebaseFirestore.instance
       .collection('orders')
-      .where('available', isEqualTo: true)
+      .where('userId',isEqualTo: firebaseAuth.currentUser?.uid ?? "")
       .snapshots();
 
-  void selectOrderAndProceed(Map<String, dynamic> order) {
+  void selectOrderAndProceed(Map<String, dynamic> order) async {
     String orderId = order['id']; // Get the orderId from the order data
-    
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => VerificationOrderScreen(orderId: orderId),
-      ),
-    );
+     await FirebaseFirestore.instance.collection('orders').doc(orderId).update({
+                      'status': "Order Received",
+                    });
   }
 
   @override
@@ -86,11 +83,24 @@ class OrderListScreenState extends State<OrderListScreen> {
                         itemCount: orders.length,
                         itemBuilder: (context, index) {
                           final order = orders[index];
-                          return ListTile(
-                            title: Text(order['product_url']),
-                            subtitle: Text('Price: \$${order['product_price']}'),
-                            onTap: () => selectOrderAndProceed(order),
-                          );
+                            return ListTile(
+                            title: Text(order['product_name']),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                              Text('Price: \$${order['product_price']}'),
+                              Text('Status: ${order['status']}'),
+                              ],
+                            ),
+                            trailing: ElevatedButton(
+                               style: ElevatedButton.styleFrom(
+                               backgroundColor: order['status'] == 'Order Received' ? Colors.grey : Colors.blue,
+                              ),
+                              onPressed:order['status'] == 'Order Received' ? null : () {
+                            selectOrderAndProceed(order);
+                            },
+                              child: Text('Order received'),
+                            ));
                         },
                       ),
                     ],

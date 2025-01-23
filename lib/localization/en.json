@@ -1,7 +1,4 @@
-import 'package:flutter_tour_app/constant/app_strings.dart';
-
-Map<String, String> english = {
-  "login_to_your_account": "login to your account",
+{
     "you_must_be_logged_in_to_access_this_section": "You must be logged in to access this section",
   "updated_successfully": "updated successfully",
   "something_is_wrong": "something is wrong",
@@ -11,7 +8,7 @@ Map<String, String> english = {
   "the_password_provided_is_too_weak.": "the password provided is too weak.",
   "the_account_already_exists_for_that_email.": "the account already exists for that email.",
   "please_write_right_email": "please write the right email",
-  "error_is": "error is: ",
+  "error_is:_$e": "error is: $e",
   "successfully_login": "successfully login",
   "no_user_found_for_that_email.": "no user found for that email.",
   "wrong_password_provided_for_that_user.": "wrong password provided for that user.",
@@ -33,4 +30,4 @@ Map<String, String> english = {
   "privacy_policy": "privacy policy",
   "please_wait": "please wait",
   "see_more": "see more"
-};
+}

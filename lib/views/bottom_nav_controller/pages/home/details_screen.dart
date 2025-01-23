@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tour_app/constant/constant.dart';
+import 'package:flutter_tour_app/services/firestore_services.dart';
 import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/payment_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
@@ -47,9 +49,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       // Lấy giá sản phẩm
       var priceElement = document.querySelector("div.Nx9bqj.CxhGGd");
       var descriptionElement = document.querySelector("span.VU-ZEz");
-      var imageElement  = document.querySelector("img._53J4C- utBuJY");
-      
-      print(imageElement?.attributes['src'] ?? "N/A");
+      var imageElement = document.querySelector("img.DByuf4.IZexXJ.jLEJ7H");
+      print(imageElement!.attributes['src'] ?? "N/A");
+
       setState(() {
         price = priceElement != null ? priceElement.text.trim() : "N/A";
         if (priceElement != null) {
@@ -101,8 +103,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               child: PageView(
                 children: [
                   Image.network(
-                    productImg,
-                       fit: BoxFit.cover,
+                    productImg != "Loading..." ? productImg : 'https://via.placeholder.com/150',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.network('https://via.placeholder.com/150', fit: BoxFit.cover);
+                    },
                   ),
                  
                 ],
@@ -225,11 +230,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Container(
                     margin: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        String buyerAddress = "";
+                        String buyerPhone = "";
+                        String cardHolderId = "";
+                        String productId = "";
+                        double productPrice = double.tryParse(price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0;
+                        String productUrl = widget.productUrl;
+                        String userId = firebaseAuth.currentUser?.uid ?? "";
+
+                        String orderId = await FirestoreServices().createOrder(
+                          productName: productName,
+                          buyerAddress: buyerAddress,
+                          buyerPhone: buyerPhone,
+                          cardHolderId: cardHolderId,
+                          productId: productId,
+                          productPrice: productPrice,
+                          productUrl: productUrl,
+                          userId: userId,
+                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PaymentScreen(),
+                            builder: (context) => PaymentScreen(orderId: orderId,),
                           ),
                         );
                       },

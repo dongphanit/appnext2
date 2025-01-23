@@ -15,14 +15,14 @@ import 'package:flutter_tour_app/constant/constant.dart';
 import 'package:flutter_tour_app/controllers/profile_controller.dart';
 import 'package:flutter_tour_app/views/bottom_nav_controller/pages/bottom_nav_controller_screen.dart';
 import 'package:flutter_tour_app/views/screens/drawer_screen.dart';
-// Screen 2: Avail Credit Card Offers
+import 'package:url_launcher/url_launcher.dart';
+
 class HomeBuyer extends StatelessWidget {
-   TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   void _checkAndNavigate(BuildContext context) {
     String searchQuery = _controller.text;
     if (searchQuery.isNotEmpty) {
-      // Navigate to ProductDetailPage and pass the search query as a parameter
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -31,10 +31,10 @@ class HomeBuyer extends StatelessWidget {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -43,18 +43,20 @@ class HomeBuyer extends StatelessWidget {
             children: [
               Text(
                 'Avail credit card offers without owning credit cards',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
               ),
               SizedBox(height: 16),
               TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                hintText: 'Paste a Flipkart link',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
+                controller: _controller,
+                decoration: InputDecoration(
+                  hintText: 'Paste a Flipkart link',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
+                ),
+                onSubmitted: (value) => _checkAndNavigate(context),
               ),
-              onSubmitted: (value) => _checkAndNavigate(context),
-            ),
               SizedBox(height: 16),
               Container(
                 height: 150,
@@ -77,7 +79,18 @@ class HomeBuyer extends StatelessWidget {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  CategoryIcon(icon: Icons.shopping_cart, label: 'Flipkart'),
+                  GestureDetector(
+                  onTap: () async {
+                      // Open privacy policy URL
+              const url = 'https://www.flipkart.com';
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
+                  },
+                  child: CategoryIcon(icon: Icons.shopping_cart, label: 'Flipkart'),
+                  ),
                   CategoryIcon(icon: Icons.ac_unit, label: 'Nutrition'),
                   CategoryIcon(icon: Icons.health_and_safety, label: 'Health'),
                   CategoryIcon(icon: Icons.ac_unit_rounded, label: 'Beauty'),
@@ -108,6 +121,13 @@ class BannerCard extends StatelessWidget {
           image: AssetImage(image),
           fit: BoxFit.cover,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 4,
+            offset: Offset(2, 2),
+          ),
+        ],
       ),
       child: Align(
         alignment: Alignment.bottomLeft,
@@ -119,6 +139,7 @@ class BannerCard extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.white,
+              backgroundColor: Colors.black54,
             ),
           ),
         ),
@@ -145,7 +166,7 @@ class OfferCard extends StatelessWidget {
           children: [
             Text(
               offerText,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
             ),
             SizedBox(height: 8),
             Text(
@@ -171,12 +192,12 @@ class CategoryIcon extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 24,
-          child: Icon(icon, size: 28),
+          backgroundColor: Colors.blueAccent,
+          child: Icon(icon, size: 28, color: Colors.white),
         ),
         SizedBox(height: 8),
-        Text(label, style: TextStyle(fontSize: 12)),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.blueAccent)),
       ],
     );
   }
 }
-

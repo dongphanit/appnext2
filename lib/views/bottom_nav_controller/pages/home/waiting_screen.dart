@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_tour_app/views/screens/home_screen.dart';
+import 'package:get/get.dart';
 
 class WaitingScreen extends StatefulWidget {
   final String orderId;
@@ -21,7 +23,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
   void initState() {
     super.initState();
     _paymentStream = FirebaseFirestore.instance
-        .collection('payment_verifications')
+        .collection('orders')
         .doc(widget.orderId)
         .snapshots();
   }
@@ -55,30 +57,41 @@ class _WaitingScreenState extends State<WaitingScreen> {
 
           if (snapshot.hasData && snapshot.data != null) {
             var paymentData = snapshot.data!.data() as Map<String, dynamic>;
-            String imageUrl = paymentData['imageUrl'] ?? '';
+            List<dynamic> imageUrls = paymentData['imageUrl'] ?? [];
 
             if (paymentData['status'] == 'completed') {
-              return Center(
+                return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.network(imageUrl),
-                    SizedBox(height: 20),
-                    Text(
-                      'Congratulations! Payment successfully completed.',
-                      style: TextStyle(fontSize: 18, color: Colors.green),
+                    for (var imageUrl in imageUrls) 
+                    Image.network(
+                      (imageUrl as Map<String, dynamic>)['url'],
+                      width: 150, // Set the desired width
+                      height: 300, // Set the desired height
+                      fit: BoxFit.cover, // Adjust the image to cover the box
                     ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Congratulations! Payment successfully completed.',
+                    style: TextStyle(fontSize: 18, color: Colors.green),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                       Get.to(() => HomeScreen());
+                    },
+                    child: Text('Go to Home'),
+                  ),
                   ],
                 ),
-              );
+                );
             } else {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    imageUrl.isNotEmpty
-                        ? Image.network(imageUrl)
-                        : Text(
+                     Text(
                             'Waiting for payment confirmation...',
                             style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),

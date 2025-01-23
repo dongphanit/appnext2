@@ -4,13 +4,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/buyer_home.dart';
+import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/card_holder_findding.dart';
+import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/card_holder_orders.dart';
+import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/settings_screen.dart';
 
 import '../views/bottom_nav_controller/pages/add_package/package_add_page.dart';
 
 //Page
 List pages = [
  HomeBuyer(),
- Settings()
+ SettingsScreen()
+];
+
+List pagesCardHolder = [
+ OrderListScreen(),
+ SettingsScreen()
 ];
 //Firebase
 var firebaseAuth = FirebaseAuth.instance;

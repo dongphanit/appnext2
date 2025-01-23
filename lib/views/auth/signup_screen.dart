@@ -54,7 +54,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return phoneNumber.isNotEmpty && phoneNumber.length >= 11;
   }
 
-  // bool _validateAddress(String address) {
   @override
   void initState() {
     //getConnectivity();
@@ -111,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 style: TextStyle(
                   fontSize: 25.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textColor,
+                  color: Colors.blueAccent,
                 ),
               ),
               SizedBox(
@@ -121,7 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextFormField(
                 style: GoogleFonts.inter(
                   fontSize: 18.0,
-                  color: const Color(0xFF151624),
+                  color: Colors.blueAccent,
                 ),
                 controller: _nameController,
                 keyboardType: TextInputType.text,
@@ -136,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextFormField(
                 style: GoogleFonts.inter(
                   fontSize: 18.0,
-                  color: const Color(0xFF151624),
+                  color: Colors.blueAccent,
                 ),
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -154,21 +153,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     prefixIcon: const Icon(
                       Icons.lock_open,
-                      color: Colors.black45,
+                      color: Colors.blueAccent,
                     ),
                     hintText: "Password",
                     hintStyle: GoogleFonts.inter(
                       fontSize: 16.0,
-                      color: const Color(0xFFABB3BB),
+                      color: Colors.blueAccent,
                       height: 1.0,
                     ),
                     suffixIcon: IconButton(
@@ -176,7 +175,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         _controller.isPasswordHiden.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Colors.black45,
+                        color: Colors.blueAccent,
                       ),
                       onPressed: () {
                         _controller.isPasswordHiden.value =
@@ -200,12 +199,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextFormField(
                 style: GoogleFonts.inter(
                   fontSize: 18.0,
-                  color: const Color(0xFF151624),
+                  color: Colors.blueAccent,
                 ),
                 controller: _phoneController,
                 keyboardType: TextInputType.number,
                 decoration:
-                    AppStyle().textFieldDecoration("Phone Number", Icons.call),
+                    AppStyle().textFieldDecoration("Phone Number", Icons.call,),
               ),
 
               SizedBox(
@@ -218,7 +217,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   // Background color of the container
                   border: Border.all(
                     // Border properties
-                    color: Colors.black, // Border color
+                    color: Colors.blueAccent, // Border color
                     width: 1, // Border width
                   ),
                   borderRadius: BorderRadius.circular(
@@ -232,7 +231,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).hintColor,
+                        color: Colors.blueAccent,
                       ),
                     ),
                     items: items
@@ -242,7 +241,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 item,
                                 style: TextStyle(
                                     fontSize: 18.sp,
-                                    fontWeight: FontWeight.w500),
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.blueAccent),
                               ),
                             ))
                         .toList(),
@@ -291,7 +291,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w300,
-                    color: Colors.black,
+                    color: Colors.blueAccent,
                   ),
                   children: [
                     TextSpan(
@@ -299,7 +299,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.violetColor,
+                        color: Colors.blueAccent,
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => Get.to(() => SignInScreen()),

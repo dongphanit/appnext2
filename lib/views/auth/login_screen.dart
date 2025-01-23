@@ -38,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void initState() {
-   // getConnectivity();
+    // getConnectivity();
     super.initState();
   }
 
@@ -57,11 +57,6 @@ class _SignInScreenState extends State<SignInScreen> {
   void dispose() {
     subscription.cancel();
     super.dispose();
-  }
-
-  // !------------validation--------------
-  bool _validateEmail(String email) {
-    return email.isNotEmpty && email.contains('@');
   }
 
   bool _validatePassword(String password) {
@@ -91,11 +86,11 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               SizedBox(height: 10.h),
               Text(
-                Localization.translate("login\nto_your_account"),
+                Localization.translate("login_to_your_account"),
                 style: TextStyle(
                   fontSize: 30.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textColor,
+                  color: Colors.blueAccent,
                 ),
               ),
               SizedBox(
@@ -110,7 +105,15 @@ class _SignInScreenState extends State<SignInScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: AppStyle()
-                    .textFieldDecoration(Localization.translate("enter_your_email"), Icons.mail),
+                    .textFieldDecoration(Localization.translate("enter_your_email"), Icons.mail)
+                    .copyWith(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                      ),
+                    ),
               ),
               SizedBox(
                 height: 20.h,
@@ -127,16 +130,16 @@ class _SignInScreenState extends State<SignInScreen> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     prefixIcon: const Icon(
                       Icons.lock_open,
-                      color: Colors.black45,
+                      color: Colors.blueAccent,
                     ),
                     hintText: "Password",
                     hintStyle: GoogleFonts.inter(
@@ -149,7 +152,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         _controller.isPasswordHiden.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Colors.black45,
+                        color: Colors.blueAccent,
                       ),
                       onPressed: () {
                         _controller.isPasswordHiden.value =
@@ -196,11 +199,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   children: [
                     TextSpan(
-                      text:  "Sign Up",
+                      text: "Sign Up",
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.violetColor,
+                        color: Colors.blueAccent,
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => Get.to(() => SignUpScreen()),
