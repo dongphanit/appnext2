@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_tour_app/constant/constant.dart';
 import 'package:flutter_tour_app/views/auth/login_screen.dart';
 import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/buyer_order.dart';
+import 'package:flutter_tour_app/views/screens/home_screen.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import your login screen
 
 class SettingsScreen extends StatelessWidget {
@@ -47,6 +48,7 @@ class SettingsScreen extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('User upgraded to CardHolder!')),
               );
+              Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => HomeScreen(), ), );
             },
           ),
           ListTile(
