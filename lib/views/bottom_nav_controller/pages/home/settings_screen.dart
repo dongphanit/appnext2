@@ -12,12 +12,21 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+     
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+            const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Text(
+              'Settings',
+              style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            ),
           ListTile(
             title: const Text('My Order'),
             onTap: () {

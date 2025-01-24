@@ -29,9 +29,7 @@ class OrderListScreenState extends State<OrderListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
-      ),
+     
       body: StreamBuilder<QuerySnapshot>(
         stream: _orderStream,
         builder: (context, snapshot) {
@@ -86,11 +84,29 @@ class OrderListScreenState extends State<OrderListScreen> {
                         itemCount: orders.length,
                         itemBuilder: (context, index) {
                           final order = orders[index];
-                          return ListTile(
-                            title: Text(order['product_url']),
-                            subtitle: Text('Price: \$${order['product_price']}'),
-                            onTap: () => selectOrderAndProceed(order),
+                          return Card(
+                            margin: EdgeInsets.symmetric(vertical: 8.0),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.all(16.0),
+                              title: Text(
+                                'Product Name: ${order['product_name']}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 8.0),
+                                  Text('Product ID: ${order['product_id']}'),
+                                  Text('Price: \$${order['product_price']}'),
+                                  Text('Buyer Address: ${order['buyer_address']}'),
+                                  Text('Buyer Phone: ${order['buyer_phone']}'),
+                                ],
+                              ),
+                              trailing: Icon(Icons.arrow_forward_ios),
+                              onTap: () => selectOrderAndProceed(order),
+                            ),
                           );
+                           
                         },
                       ),
                     ],

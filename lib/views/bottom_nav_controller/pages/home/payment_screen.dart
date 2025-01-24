@@ -289,6 +289,43 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: CircularProgressIndicator(),
             ),
           ),
+           Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    String buyerAddress = _addressController.text;
+                    String buyerPhone = _phoneController.text;
+
+                    // Update Firestore with buyer details
+                    await FirebaseFirestore.instance.collection('orders').doc(widget.orderId).update({
+                      'buyer_address': buyerAddress,
+                      'buyer_phone': buyerPhone,
+                      'available': true
+                    });
+
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CardHolderFindingScreen(orderId: widget.orderId),
+                      ),
+                    );
+
+                    // Handle payment confirmation
+                    showSnackbar(context, 'Payment Confirmed');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'PAYMENT LATER',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              )
             ],
           ),
         ),
