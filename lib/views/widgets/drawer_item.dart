@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:velocity_x/velocity_x.dart';
-
 Widget drawerItem({required String itemName, required onClick}) {
   return InkWell(
     onTap: onClick,
@@ -18,5 +16,5 @@ Widget drawer({required VoidCallback onPressed, required String title}) {
         side: BorderSide(color: Colors.grey.withOpacity(1.0)),
       ),
       onPressed: onPressed,
-      child: title.text.black.make());
+      child: Text(""));
 }

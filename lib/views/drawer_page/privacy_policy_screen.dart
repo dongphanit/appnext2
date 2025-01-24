@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
-
 import '../../constant/app_strings.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
@@ -33,7 +31,6 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.justify,
               ),
-              10.h.heightBox,
               Text(
                 headingEng.tr,
                 style: TextStyle(
@@ -42,25 +39,15 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   fontSize: 20.sp,
                 ),
               ),
-              15.h.heightBox,
               customDescriptionText(title: title1Eng, desc: desc1Eng),
-              10.h.heightBox,
               customDescriptionText(title: title2Eng, desc: desc2Eng),
-              10.h.heightBox,
               customDescriptionText(title: title3Eng, desc: desc3Eng),
-              10.h.heightBox,
               customDescriptionText(title: title4Eng, desc: desc4Eng),
-              10.h.heightBox,
               customDescriptionText(title: title5Eng, desc: desc5Eng),
-              10.h.heightBox,
               customDescriptionText(title: title6Eng, desc: desc6Eng),
-              10.h.heightBox,
               customDescriptionText(title: title7Eng, desc: desc7Eng),
-              10.h.heightBox,
               customDescriptionText(title: title8Eng, desc: desc8Eng),
-              10.h.heightBox,
               customDescriptionText(title: title8Eng, desc: desc8Eng),
-              10.h.heightBox,
               Text(
                 conclusionEng.tr,
                 style: TextStyle(color: Colors.black, fontSize: 16.sp),
@@ -85,7 +72,6 @@ class PrivacyPolicyScreen extends StatelessWidget {
             fontSize: 16.sp,
           ),
         ),
-        5.h.heightBox,
         Padding(
           padding: EdgeInsets.only(left: 20.w),
           child: Text(
