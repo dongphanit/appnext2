@@ -104,12 +104,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                orderData['productName'] ?? 'Product Name',
+                                orderData['product_name'] ?? 'Product Name',
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Amount: ₹${orderData['amount'] ?? '0'}',
+                                'Amount: ₹${orderData['product_price'] ?? '0'}',
                                 style: const TextStyle(fontSize: 16, color: Colors.black87),
                               ),
                               const SizedBox(height: 8),
@@ -124,7 +124,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Product Link: ${orderData['productLink'] ?? 'Not available'}',
+                                'Product Link: ${orderData['product_url'] ?? 'Not available'}',
                                 style: const TextStyle(fontSize: 16, color: Colors.blue),
                               ),
                               const SizedBox(height: 8),
