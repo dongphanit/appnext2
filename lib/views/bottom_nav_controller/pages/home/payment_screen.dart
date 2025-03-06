@@ -9,6 +9,7 @@ import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/card_hol
 import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/otp_verification.dart';
 import 'package:pay/pay.dart'; // Replace with the correct import path
 
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'payment_configurations.dart' as payment_configurations;
 const _paymentItems = [
   PaymentItem(
@@ -281,14 +282,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ApplePayButton(
             paymentConfiguration: payment_configurations.defaultApplePayConfig,
             paymentItems: _paymentItems,
-            style: ApplePayButtonStyle.black,
-            type: ApplePayButtonType.buy,
             margin: const EdgeInsets.only(top: 15.0),
             onPaymentResult: onApplePayResult,
             loadingIndicator: const Center(
               child: CircularProgressIndicator(),
             ),
           ),
+            ApplePayButton(
+            paymentConfiguration: payment_configurations.defaultApplePayConfig,
+            paymentItems: _paymentItems,
+            margin: const EdgeInsets.only(top: 15.0),
+            onPaymentResult: onApplePayResult,
+            loadingIndicator: const Center(
+              child: CircularProgressIndicator(),
+            )),
            Center(
                 child: ElevatedButton(
                   onPressed: () async {
@@ -325,7 +332,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
-              )
+              ),
+              CardField(
+          onCardChanged: (card) {
+            print(card);
+          },
+        ),
             ],
           ),
         ),
