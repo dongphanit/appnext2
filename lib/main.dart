@@ -12,8 +12,11 @@ import 'theme/theme_manager.dart';
 import 'route/route.dart';
 import 'views/screens/splash_screen.dart';
 import 'firebase_options.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 void main() async {
   // ! ------------Firbase initialzation-----------------
+
+Stripe.publishableKey = "pk_test_cdx7wwDM4OeryxFqcZ3xwtmo";
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
