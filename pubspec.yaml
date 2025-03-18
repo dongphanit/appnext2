@@ -58,6 +58,7 @@ dependencies:
   file_picker: ^5.0.0
   firebase_storage_web: ^3.10.7
   flutter_stripe: ^11.4.0
+  flutter_stripe_web: ^6.4.0
 
 dev_dependencies:
   flutter_test:

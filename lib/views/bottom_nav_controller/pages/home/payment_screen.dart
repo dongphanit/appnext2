@@ -12,6 +12,7 @@ import 'package:pay/pay.dart'; // Replace with the correct import path
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_stripe_web/flutter_stripe_web.dart';
 import 'payment_configurations.dart' as payment_configurations;
 const _paymentItems = [
   PaymentItem(
@@ -38,6 +39,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     super.initState();
+    initPaymentSheet();
     _googlePayConfigFuture =
         PaymentConfiguration.fromAsset('default_google_pay_config.json');
         initPaymentSheet();
@@ -224,6 +226,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   },
                   child: const Text('Verify'),
                   ),
+                     ElevatedButton(
+                  onPressed: () {
+                  Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => OTPVerificationScreen(phoneNumber: _phoneController.text),
+  ),
+);
+
+                  },
+                  child: const Text('Verify1'),
+                  ),
                 ],
                 ),
               const SizedBox(height: 20),
@@ -365,26 +379,43 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
     );
   }
- Future<Map<String, dynamic>> _createTestPaymentSheet() async {
-    final url = Uri.parse('http://34.142.196.152:8887/create-payment-intent');
-    final response = await http.post(
+  
+  Future<Map<String, dynamic>> _createTestPaymentSheet() async {
+  final url = Uri.parse('http://localhost:3000/create-payment-intent');
+
+  try {
+    final response = await http.get(
       url,
       headers: {
         'Content-Type': 'application/json',
       },
-      body: json.encode({
-        'a': 'a',
-      }),
+   
     );
-    final body = json.decode(response.body);
-    if (body['error'] != null) {
-      throw Exception(body['error']);
-    }
-    return body;
-  }
 
+    // Check if the response status is OK (200)
+    print(response);
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      
+      // If the API response contains an 'error', throw an exception
+      if (body['error'] != null) {
+        throw Exception(body['error']);
+      }
+
+      // Return the body if no errors are found
+      return body;
+    } else {
+      // Handle error based on the response status code
+      throw Exception('Failed to create payment intent: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Catch and print any exceptions
+    print('Error: $e');
+    rethrow;  // Re-throw the exception if needed
+  }
+}
   Future<void> initPaymentSheet() async {
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    // final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
       // 1. create payment intent on the server
       final data = await _createTestPaymentSheet();
@@ -408,7 +439,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           // Main params
-          paymentIntentClientSecret: data['paymentIntent'],
+          paymentIntentClientSecret: data['clientSecret'],
           merchantDisplayName: 'Flutter Stripe Store Demo',
           preferredNetworks: [CardBrand.Amex],
           // Customer params
@@ -456,7 +487,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       });
     } catch (e) {
       if (context.mounted) {
-        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+        // scaffoldMessenger.showSnackBar(SnackBar(content: Text('Error: $e')));
       }
       rethrow;
     }
