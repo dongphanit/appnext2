@@ -12,7 +12,6 @@ import 'package:pay/pay.dart'; // Replace with the correct import path
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:flutter_stripe_web/flutter_stripe_web.dart';
 import 'payment_configurations.dart' as payment_configurations;
 const _paymentItems = [
   PaymentItem(
