@@ -17,7 +17,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   void initState() {
     super.initState();
-    _sendOTP();
+    // _sendOTP();
   }
 
   // Hàm gửi OTP đến số điện thoại
@@ -90,6 +90,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _sendOTP,
+              child: Text('Xác minh OTP'),
+            ),
             ElevatedButton(
               onPressed: _verifyOTP,
               child: Text('Xác minh OTP'),

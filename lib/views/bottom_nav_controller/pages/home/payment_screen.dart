@@ -380,7 +380,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
   
   Future<Map<String, dynamic>> _createTestPaymentSheet() async {
-  final url = Uri.parse('http://localhost:3000/create-payment-intent');
+  final url = Uri.parse('http://192.168.1.154:3000/create-payment-intent');
 
   try {
     final response = await http.get(
