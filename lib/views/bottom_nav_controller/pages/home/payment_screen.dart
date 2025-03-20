@@ -414,6 +414,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
   Future<void> initPaymentSheet() async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     // final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
       // 1. create payment intent on the server
@@ -485,9 +486,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         step = 1;
       });
     } catch (e) {
-      if (context.mounted) {
-        // scaffoldMessenger.showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
+      scaffoldMessenger.showSnackBar(SnackBar(content: Text('Error: $e')));
       rethrow;
     }
   }
