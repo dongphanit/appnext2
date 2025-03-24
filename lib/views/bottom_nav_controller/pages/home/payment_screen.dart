@@ -449,14 +449,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
           // Extra params
           primaryButtonLabel: 'Pay now',
-          applePay: PaymentSheetApplePay(
-            merchantCountryCode: 'DE',
-          ),
-          googlePay: PaymentSheetGooglePay(
-            merchantCountryCode: 'DE',
-            testEnv: true,
-            buttonType: PlatformButtonType.book,
-          ),
+          // applePay: PaymentSheetApplePay(
+          //   merchantCountryCode: 'DE',
+          // ),
+          // googlePay: PaymentSheetGooglePay(
+          //   merchantCountryCode: 'DE',
+          //   testEnv: true,
+          //   buttonType: PlatformButtonType.book,
+          // ),
           style: ThemeMode.dark,
           appearance: PaymentSheetAppearance(
             colors: PaymentSheetAppearanceColors(
@@ -556,7 +556,6 @@ class PaymentMethodTile extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
