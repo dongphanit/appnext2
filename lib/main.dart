@@ -17,6 +17,7 @@ void main() async {
   // ! ------------Firbase initialzation-----------------
 
 Stripe.publishableKey = "pk_test_cdx7wwDM4OeryxFqcZ3xwtmo";
+Stripe.merchantIdentifier = "merchant.sportme.piepay";
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

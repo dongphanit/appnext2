@@ -77,7 +77,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Order Summary Section
               const Text(
@@ -88,7 +88,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  // border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -449,14 +449,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
           // Extra params
           primaryButtonLabel: 'Pay now',
-          // applePay: PaymentSheetApplePay(
-          //   merchantCountryCode: 'DE',
-          // ),
-          // googlePay: PaymentSheetGooglePay(
-          //   merchantCountryCode: 'DE',
-          //   testEnv: true,
-          //   buttonType: PlatformButtonType.book,
-          // ),
+          applePay: PaymentSheetApplePay(
+            merchantCountryCode: 'DE',
+          ),
+          googlePay: PaymentSheetGooglePay(
+            merchantCountryCode: 'DE',
+            testEnv: true,
+            buttonType: PlatformButtonType.book,
+          ),
           style: ThemeMode.dark,
           appearance: PaymentSheetAppearance(
             colors: PaymentSheetAppearanceColors(
