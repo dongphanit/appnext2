@@ -16,7 +16,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 void main() async {
   // ! ------------Firbase initialzation-----------------
 
-Stripe.publishableKey = "pk_test_cdx7wwDM4OeryxFqcZ3xwtmo";
+Stripe.publishableKey = "pk_test_51R3vTvRqa5kq5YPXQ5eUyzfdKMhYJbJvzBllOWmZGg4O3xJondcMYHQiJPONiQCMr3XX31bq3KnJA43GR8Tfr2xy00nCVj2PG7";
 Stripe.merchantIdentifier = "merchant.sportme.piepay";
 
   WidgetsFlutterBinding.ensureInitialized();
