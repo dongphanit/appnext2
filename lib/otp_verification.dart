@@ -14,6 +14,7 @@ class OTPVerificationScreen extends StatefulWidget {
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final TextEditingController _otpController = TextEditingController();
   String? _verificationId;
+  String? msg;
 
   @override
   void initState() {
@@ -27,12 +28,18 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       phoneNumber: widget.phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
         await FirebaseAuth.instance.signInWithCredential(credential);
+         setState(() {
+          msg='Xác minh tự động thành công!';
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Xác minh tự động thành công!')),
         );
       },
       verificationFailed: (FirebaseAuthException e) {
         print('Lỗi xác minh: ${e.message}');
+           setState(() {
+          msg='Lỗi xác minh: ${e.message}';
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Lỗi xác minh: ${e.message}')),
         );
@@ -40,6 +47,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       codeSent: (String verificationId, int? resendToken) {
         setState(() {
           _verificationId = verificationId;
+          msg='OTP đã được gửi đến ${widget.phoneNumber}';
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('OTP đã được gửi đến ${widget.phoneNumber}')),
@@ -63,10 +71,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       );
       try {
         await FirebaseAuth.instance.signInWithCredential(credential);
+          setState(() {
+          msg='Xác minh thành công!';
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Xác minh thành công!')),
         );
       } catch (e) {
+         setState(() {
+          msg='Xác minh thất bại: $e';
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Xác minh thất bại: $e')),
         );
@@ -83,6 +97,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         child: Column(
           children: [
             Text('Số điện thoại: ${widget.phoneNumber}'),
+
             TextField(
               controller: _otpController,
               decoration: InputDecoration(
@@ -100,6 +115,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               onPressed: _verifyOTP,
               child: Text('Xác minh OTP'),
             ),
+             Text('Số điện thoại: ${msg}'),
           ],
         ),
       ),
