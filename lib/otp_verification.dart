@@ -24,6 +24,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   // Hàm gửi OTP đến số điện thoại
   Future<void> _sendOTP() async {
+    setState(() {
+          msg='_sendOTP';
+        });
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: widget.phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
@@ -63,6 +66,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   // Hàm xác minh OTP
   Future<void> _verifyOTP() async {
+    setState(() {
+          msg='_verifyOTP';
+        });
     if (_verificationId != null) {
       final otp = _otpController.text;
       final credential = PhoneAuthProvider.credential(
