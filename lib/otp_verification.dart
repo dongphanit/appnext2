@@ -57,6 +57,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         );
       },
       codeAutoRetrievalTimeout: (String verificationId) {
+          setState(() {
+          msg='codeAutoRetrievalTimeout';
+        });
         setState(() {
           _verificationId = verificationId;
         });
