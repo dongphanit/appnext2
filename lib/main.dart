@@ -6,10 +6,8 @@ import 'otp_verification.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+Future<void> main() async {
+ 
   runApp(const MyApp());
 }
 

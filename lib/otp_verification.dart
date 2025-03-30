@@ -1,3 +1,5 @@
+import 'package:bbbb/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -24,6 +26,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   // Hàm gửi OTP đến số điện thoại
   Future<void> _sendOTP() async {
+     await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
     setState(() {
           msg='_sendOTP';
         });
@@ -37,7 +42,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Xác minh tự động thành công!')),
         );
-      },
+        },
       verificationFailed: (FirebaseAuthException e) {
         print('Lỗi xác minh: ${e.message}');
            setState(() {
