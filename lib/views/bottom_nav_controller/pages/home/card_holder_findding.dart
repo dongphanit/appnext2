@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:bbbb/views/bottom_nav_controller/pages/home/waiting_screen.dart';
@@ -14,6 +16,34 @@ class CardHolderFindingScreen extends StatefulWidget {
 
 class _CardHolderFindingScreenState extends State<CardHolderFindingScreen> {
   late Stream<DocumentSnapshot> _orderStream;
+int countdown = 3; // Countdown starting at 3 seconds
+  late Timer _timer;
+
+
+  void _startCountdown() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (countdown > 0) {
+        setState(() {
+          countdown--;
+        });
+      } else {
+        _timer.cancel(); // Stop the timer when countdown reaches 0
+        _navigateToWaitingScreen(); // Navigate to the next screen
+      }
+    });
+  }
+
+  void _navigateToWaitingScreen() {
+    // Navigate to the WaitingScreen after the countdown is finished
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WaitingScreen(
+          orderId: widget.orderId,
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -50,6 +80,10 @@ class _CardHolderFindingScreenState extends State<CardHolderFindingScreen> {
             String? cardHolderId = orderData['cardHolderId'];
 
             if (status == 'accepted' && cardHolderId != null) {
+              if (countdown == 3){
+                _startCountdown();
+              }
+              
               // Card holder đã chấp nhận thanh toán
               return Center(
                 child: Column(
@@ -65,6 +99,9 @@ class _CardHolderFindingScreenState extends State<CardHolderFindingScreen> {
                     ),
                     const SizedBox(height: 10),
                     Text("Card Holder ID: $cardHolderId"),
+                    // Countdown timer display
+          Text("Redirecting in $countdown seconds..."),
+
                     ElevatedButton(
                       onPressed: () {
                         // Chuyển tới màn hình

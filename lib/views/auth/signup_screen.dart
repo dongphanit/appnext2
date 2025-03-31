@@ -59,6 +59,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     //getConnectivity();
     super.initState();
   }
+
+ 
+
   final List<String> items = [
     'Barishal',
     'Chattogram',

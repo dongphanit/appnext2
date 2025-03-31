@@ -15,6 +15,18 @@ Future<QuerySnapshot> getOrders({bool available = true}) async {
       .where('availability', isEqualTo: available)
       .get();
 }
+Future<Map<String, dynamic>?> getSettings() async {
+  try {
+    DocumentSnapshot orderSnapshot = await FirebaseFirestore.instance.collection('settings').doc("discount").get();
+    
+    return orderSnapshot.data() as Map<String, dynamic>?;
+   
+  } catch (e) {
+    print("Error fetching orders: $e");
+  }
+  return null;
+  
+}
 // Function to create a new order in Firestore
 Future<String> createOrder({
   required String buyerAddress,

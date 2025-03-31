@@ -15,6 +15,8 @@ import 'package:bbbb/constant/constant.dart';
 import 'package:bbbb/controllers/profile_controller.dart';
 import 'package:bbbb/views/bottom_nav_controller/pages/bottom_nav_controller_screen.dart';
 import 'package:bbbb/views/screens/drawer_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 class HomeBuyer extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
 
@@ -80,12 +82,12 @@ class HomeBuyer extends StatelessWidget {
                   GestureDetector(
                   onTap: () async {
                       // Open privacy policy URL
-              // const url = 'https://www.flipkart.com';
-              // if (await canLaunch(url)) {
-              //   await launch(url);
-              // } else {
-              //   throw 'Could not launch $url';
-              // }
+              const url = 'https://www.flipkart.com';
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
                   },
                   child: CategoryIcon(icon: Icons.shopping_cart, label: 'Flipkart'),
                   ),

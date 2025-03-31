@@ -93,9 +93,28 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: AppStyle()
-                    .textFieldDecoration(Localization.translate("enter_your_email"), Icons.mail)
+                decoration:   InputDecoration(
+                    hintText: Localization.translate("enter_your_email"),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    hintStyle: GoogleFonts.inter(
+                      fontSize: 16.0,
+                      color: const Color(0xFFABB3BB),
+                      height: 1.0,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.email,
+                      color: Colors.blueAccent,
+                    ),)
                     .copyWith(
+                      prefixIconColor: Colors.blueAccent,
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
                       ),
@@ -217,11 +236,7 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: () async {
                 Navigator.pop(context, 'Cancel');
                 setState(() => isAlertSet = false);
-               
-                if (!isDeviceConnected && isAlertSet == false) {
-                  showDialogBox();
-                  setState(() => isAlertSet = true);
-                }
+              
               },
               child: const Text('OK'),
             ),

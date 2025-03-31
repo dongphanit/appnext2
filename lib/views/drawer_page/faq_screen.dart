@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bbbb/constant/app_colors.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 import '../../constant/app_strings.dart';
 
@@ -31,33 +30,18 @@ class FaqScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              "Faq"
-                  .tr
-                  .text
-                  .size(28.sp)
-                  .fontWeight(FontWeight.w500)
-                  .makeCentered(),
-              40.h.heightBox,
               customExpansionTile(
                   title: faqTitle1.tr, description: faqDescription1.tr),
-              5.h.heightBox,
               Divider(),
-              5.h.heightBox,
               customExpansionTile(
                   title: faqTitle2.tr, description: faqDescription2.tr),
-              5.h.heightBox,
               Divider(),
-              5.h.heightBox,
               customExpansionTile(
                   title: faqTitle3.tr, description: faqDescription3.tr),
-              5.h.heightBox,
               Divider(),
-              5.h.heightBox,
               customExpansionTile(
                   title: faqTitle4.tr, description: faqDescription4.tr),
-              5.h.heightBox,
               Divider(),
-              5.h.heightBox,
               customExpansionTile(
                   title: faqTitle5.tr, description: faqDescription5.tr),
             ],
@@ -76,7 +60,7 @@ class FaqScreen extends StatelessWidget {
       textColor: AppColors.textColor,
       childrenPadding: EdgeInsets.all(10.h),
       title: Text(title),
-      children: [description.text.black.make()],
+      children: [Text("aa")],
     );
   }
 }

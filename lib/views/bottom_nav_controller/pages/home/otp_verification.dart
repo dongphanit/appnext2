@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:bbbb/firebase_options.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   final String phoneNumber;
@@ -17,11 +19,14 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   void initState() {
     super.initState();
-    _sendOTP();
+    // _sendOTP();
   }
 
   // Hàm gửi OTP đến số điện thoại
   Future<void> _sendOTP() async {
+     await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: widget.phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
@@ -90,6 +95,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _sendOTP,
+              child: Text('Xác minh OTP'),
+            ),
             ElevatedButton(
               onPressed: _verifyOTP,
               child: Text('Xác minh OTP'),

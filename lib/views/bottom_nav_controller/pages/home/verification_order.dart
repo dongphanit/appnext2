@@ -5,9 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VerificationOrderScreen extends StatefulWidget {
   final String orderId;
@@ -88,9 +87,12 @@ class _VerificationOrderScreenState extends State<VerificationOrderScreen> {
               .putFile(File(_image!.path));
           downloadURL = await snapshot.ref.getDownloadURL();
         }
-        _uploadedImages.add({
-          'url': downloadURL,
-        });
+             setState(() {
+          _uploadedImages.add({
+            'id': fileName,
+            'url': downloadURL,
+          });
+       });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Upload successful!')),
@@ -155,8 +157,7 @@ class _VerificationOrderScreenState extends State<VerificationOrderScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(image['name']),
-        content: Image.network(image['url']),
+        content: Image.network( (image as Map<String, dynamic>)['url'],),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -165,7 +166,7 @@ class _VerificationOrderScreenState extends State<VerificationOrderScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              _deleteImage(image['name']);
+              _deleteImage(image['id']);
             },
             child: Text('Delete'),
           ),
@@ -183,80 +184,94 @@ class _VerificationOrderScreenState extends State<VerificationOrderScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      // final url = _orderData?['product_url'];
-                      // if (await canLaunchUrl(Uri.parse(url))) {
-                      //   await launchUrl(Uri.parse(url));
-                      // } else {
-                      //   throw 'Could not launch $url';
-                      // }
-                    },
-                    child: Text('Please click to complete the transaction'),
-                  ),
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: ElevatedButton(
+          onPressed: () async {
+            final url = _orderData?['product_url'];
+            if (url != null && await canLaunchUrl(Uri.parse(url))) {
+              await launchUrl(Uri.parse(url));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not launch $url')),
+              );
+            }
+          },
+          child: Text('Please click to complete the transaction'),
+            ),
+          ),
+          SizedBox(height: 20),
+          Text(
+            'Upload your invoice to verify your order:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          GestureDetector(
+            onTap: _pickImage,
+            child: Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+            child: Text(
+              _image != null ? _image!.name : 'No file selected',
+              style: TextStyle(color: Colors.grey[700]),
+              overflow: TextOverflow.ellipsis,
+            ),
+              ),
+              Icon(Icons.upload_file, color: Colors.blue),
+            ],
+          ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Text(
+            'Uploaded Images:',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 10),
+          _uploadedImages.isNotEmpty
+          ? ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: _uploadedImages.length,
+              itemBuilder: (context, index) {
+            final image = _uploadedImages[index];
+            return ListTile(
+              leading: Image.network(
+               (image as Map<String, dynamic>)['url'],
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
+            
+              onTap: () => _showImageDetails(image),
+            );
+              },
+            )
+          : Center(
+              child: Text(
+            'No images uploaded yet.',
+            style: TextStyle(color: Colors.grey),
               ),
             ),
-            Text(
-              'Upload your invoice to verify your order:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          SizedBox(height: 30),
+          Center(
+            child: ElevatedButton(
+          onPressed: _uploadedImages.isNotEmpty ? _submitInvoice : null,
+          child: Text('Submit'),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _uploadedImages.length,
-                itemBuilder: (context, index) {
-                  final image = _uploadedImages[index];
-                  return ListTile(
-                    leading: Image.network(
-                      image['url'],
-                      width: 300,
-                      height: 300,
-                      fit: BoxFit.cover,
-                    ),
-                    onTap: () => _showImageDetails(image),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 20),
-            GestureDetector(
-              onTap: _pickImage,
-              child: Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'No file selected',
-                        style: TextStyle(color: Colors.grey[700]),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Icon(Icons.upload_file, color: Colors.blue),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 30),
-            Center(
-              child: ElevatedButton(
-                onPressed:
-                    _uploadedImages != null ? () => _submitInvoice() : null,
-                child: Text('Submit'),
-              ),
-            ),
-          ],
+          ),
+        ],
+          ),
         ),
       ),
     );

@@ -4,18 +4,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bbbb/constant/constant.dart';
 import 'package:bbbb/views/auth/login_screen.dart';
 import 'package:bbbb/views/bottom_nav_controller/pages/home/buyer_order.dart';
+import 'package:bbbb/views/screens/home_screen.dart';
+import 'package:url_launcher/url_launcher.dart'; // Import your login screen
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+     
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+            const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Text(
+              'Settings',
+              style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            ),
           ListTile(
             title: const Text('My Order'),
             onTap: () {
@@ -36,18 +48,19 @@ class SettingsScreen extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('User upgraded to CardHolder!')),
               );
+              Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => HomeScreen(), ), );
             },
           ),
           ListTile(
             title: const Text('Privacy Policy'),
             onTap: () async {
               // Open privacy policy URL
-              // const url = 'https://your-privacy-policy-url.com';
-              // if (await canLaunch(url)) {
-              //   await launch(url);
-              // } else {
-              //   throw 'Could not launch $url';
-              // }
+              const url = 'https://your-privacy-policy-url.com';
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
             },
           ),
           ListTile(
