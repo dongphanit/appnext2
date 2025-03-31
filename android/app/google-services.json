@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "761714459949",
+    "firebase_url": "https://traveltovietnam-3270d-default-rtdb.firebaseio.com",
+    "project_id": "traveltovietnam-3270d",
+    "storage_bucket": "traveltovietnam-3270d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761714459949:android:4e35759edf8aee8edeffa4",
+        "android_client_info": {
+          "package_name": "com.example.flutter_tour_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC60L90oBlyxNVeS5MPolNViQ5hQc4zYf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761714459949:android:92ec5ce9e3336335deffa4",
+        "android_client_info": {
+          "package_name": "com.sportme.appnext2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC60L90oBlyxNVeS5MPolNViQ5hQc4zYf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

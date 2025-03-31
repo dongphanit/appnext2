@@ -1,4 +1,4 @@
-package com.example.bbbb
+package com.sportme.bbbb
 
 import io.flutter.embedding.android.FlutterActivity
 
