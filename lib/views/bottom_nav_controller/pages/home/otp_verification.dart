@@ -19,7 +19,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   void initState() {
     super.initState();
-    // _sendOTP();
+    _sendOTP();
   }
 
   // Hàm gửi OTP đến số điện thoại
@@ -66,13 +66,15 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       );
       try {
         await FirebaseAuth.instance.signInWithCredential(credential);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Xác minh thành công!')),
-        );
+         // Simulate OTP verification success
+              // Return a success result when OTP verification is successful
+              Navigator.pop(context, true); // Pass `true` to indicate success
+           
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Xác minh thất bại: $e')),
         );
+        
       }
     }
   }
@@ -95,10 +97,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendOTP,
-              child: Text('Xác minh OTP'),
-            ),
+           
             ElevatedButton(
               onPressed: _verifyOTP,
               child: Text('Xác minh OTP'),

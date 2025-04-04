@@ -1,7 +1,10 @@
+import 'package:bbbb/localization/localization.dart';
+import 'package:bbbb/views/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bbbb/constant/constant.dart';
 import 'package:bbbb/services/firestore_services.dart';
 import 'package:bbbb/views/bottom_nav_controller/pages/home/payment_screen.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 
@@ -19,13 +22,23 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   String productDescription = "Loading...";
   String productImg = "Loading...";
   String priceDiscount = "Loading...";
+  String discountValue = "";
+  String discountType= "";
 
   @override
   void initState() {
     super.initState();
+    getSettings();
     fetchProductDetails();
   }
 
+  Future<void> getSettings() async {
+      
+      Map<String, dynamic>? data = await FirestoreServices().getSettings();
+     discountType =  data?["discountType"];
+     discountValue = data?["discountValue"];
+     
+  }
   // Hàm lấy dữ liệu sản phẩm
   Future<void> fetchProductDetails() async {
     // URL của sản phẩm trên Flipkart
@@ -57,7 +70,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         if (priceElement != null) {
           price = priceElement.text.trim();
           double originalPrice = double.tryParse(price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0;
-          double discountPrice = originalPrice * 0.9;
+          double discountPrice = 0;
+          if (discountType == "fix") {
+            discountPrice = originalPrice - double.parse(discountValue);
+          } else{
+            discountPrice=  originalPrice* double.parse(discountValue);
+          }
           priceDiscount = "₹${discountPrice.toStringAsFixed(2)}";
         } else {
           price = "N/A";
@@ -76,7 +94,35 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       });
     }
   }
+void _showLoginDialog() {
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(Localization.translate("login_required")),
+          content: Text(Localization.translate("you_must_be_logged_in_to_access_this_section")),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Navigate to the login screen
 
+                Get.to(() => SignInScreen());
+                // Add your login navigation logic here
+              },
+              child: Text("Login"),
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,6 +277,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     margin: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       onPressed: () async {
+                        if (firebaseAuth.currentUser == null) {
+        // Show login modal
+        _showLoginDialog();
+        return;
+      }
                         String buyerAddress = "";
                         String buyerPhone = "";
                         String cardHolderId = "";

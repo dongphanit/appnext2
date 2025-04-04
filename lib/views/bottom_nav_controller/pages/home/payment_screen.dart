@@ -34,16 +34,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
   late final Future<PaymentConfiguration> _googlePayConfigFuture;
+  bool verificationSuccessful = false;
+
+  String discountValue = "";
+  String discountType= "";
   int step = 0;
   @override
   void initState() {
     super.initState();
     initPaymentSheet();
-    _googlePayConfigFuture =
-        PaymentConfiguration.fromAsset('default_google_pay_config.json');
+    // _googlePayConfigFuture =
+    //     PaymentConfiguration.fromAsset('default_google_pay_config.json');
         initPaymentSheet();
-          }
-
+  
+  }
+  
   void onGooglePayResult(paymentResult) {
          Navigator.push(
                       context,
@@ -199,44 +204,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   ),
                   const SizedBox(width: 10),
-                  ElevatedButton(
+                  verificationSuccessful? Icon(Icons.check_circle, color: Colors.green,): ElevatedButton(
                   onPressed: () {
-                    showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                        ListTile(
-                          leading: const Icon(Icons.cancel),
-                          title: const Text('Cancel'),
-                          onTap: () {
-                          Navigator.pop(context);
-                          },
-                        ),
-                        OTPVerificationScreen(phoneNumber: _phoneController.text)
-                        ],
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OTPVerificationScreen(phoneNumber: _phoneController.text),
                       ),
-                      );
-                    },
-                    );
+                    ).then((result) {
+                      setState(() {
+                        verificationSuccessful=result;
+                      });
+                        // Handle the result when the bottom sheet is closed
+                        if (result == true) {
+                          // OTP verification was successful
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('OTP verified successfully!')));
+                        } else {
+                          // OTP verification failed or the user canceled
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('OTP verification failed or canceled')));
+                        }
+                      });
                   },
                   child: const Text('Verify'),
                   ),
-                     ElevatedButton(
-                  onPressed: () {
-                  Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => OTPVerificationScreen(phoneNumber: _phoneController.text),
-  ),
-);
-
-                  },
-                  child: const Text('Verify1'),
-                  ),
+                    
                 ],
                 ),
               const SizedBox(height: 20),
@@ -297,81 +288,45 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                 ),
               ):
-                       // Example pay button configured using an asset
-          FutureBuilder<PaymentConfiguration>(
-              future: _googlePayConfigFuture,
-              builder: (context, snapshot) => snapshot.hasData
-                  ? GooglePayButton(
-                      paymentConfiguration: snapshot.data!,
-                      paymentItems: _paymentItems,
-                      type: GooglePayButtonType.buy,
-                      margin: const EdgeInsets.only(top: 15.0),
-                      onPaymentResult: onGooglePayResult,
-                      loadingIndicator: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : const SizedBox.shrink()),
-          // Example pay button configured using a string
-          ApplePayButton(
-            paymentConfiguration: payment_configurations.defaultApplePayConfig,
-            paymentItems: _paymentItems,
-            margin: const EdgeInsets.only(top: 15.0),
-            onPaymentResult: onApplePayResult,
-            loadingIndicator: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-            ApplePayButton(
-            paymentConfiguration: payment_configurations.defaultApplePayConfig,
-            paymentItems: _paymentItems,
-            margin: const EdgeInsets.only(top: 15.0),
-            onPaymentResult: onApplePayResult,
-            loadingIndicator: const Center(
-              child: CircularProgressIndicator(),
-            )),
-           Center(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    String buyerAddress = _addressController.text;
-                    String buyerPhone = _phoneController.text;
+                     
+          //  Center(
+          //       child: ElevatedButton(
+          //         onPressed: () async {
+          //           String buyerAddress = _addressController.text;
+          //           String buyerPhone = _phoneController.text;
 
-                    // Update Firestore with buyer details
-                    await FirebaseFirestore.instance.collection('orders').doc(widget.orderId).update({
-                      'buyer_address': buyerAddress,
-                      'buyer_phone': buyerPhone,
-                      'available': true
-                    });
+          //           // Update Firestore with buyer details
+          //           await FirebaseFirestore.instance.collection('orders').doc(widget.orderId).update({
+          //             'buyer_address': buyerAddress,
+          //             'buyer_phone': buyerPhone,
+          //             'available': true
+          //           });
 
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CardHolderFindingScreen(orderId: widget.orderId),
-                      ),
-                    );
+          //           Navigator.push(
+          //             context,
+          //             MaterialPageRoute(
+          //               builder: (context) => CardHolderFindingScreen(orderId: widget.orderId),
+          //             ),
+          //           );
 
-                    // Handle payment confirmation
-                    showSnackbar(context, 'Payment Confirmed');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'PAYMENT LATER',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              CardField(
-          onCardChanged: (card) {
-            print(card);
-          },
-        ),
+          //           // Handle payment confirmation
+          //           showSnackbar(context, 'Payment Confirmed');
+          //         },
+          //         style: ElevatedButton.styleFrom(
+          //           backgroundColor: Colors.green,
+          //           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+          //           shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(8),
+          //           ),
+          //         ),
+          //         child: const Text(
+          //           'PAYMENT LATER',
+          //           style: TextStyle(fontSize: 16),
+          //         ),
+          //       ),
+          //     ),
+              Container(),
             ],
           ),
         ),
@@ -380,7 +335,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
   
   Future<Map<String, dynamic>> _createTestPaymentSheet() async {
-  final url = Uri.parse('http://192.168.1.39:3000/create-payment-intent');
+  final url = Uri.parse('http://137.184.52.206:8888/create-payment-intent');
 
   try {
     final response = await http.get(
@@ -414,11 +369,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
   Future<void> initPaymentSheet() async {
+     final data = await _createTestPaymentSheet();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     // final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
       // 1. create payment intent on the server
-      final data = await _createTestPaymentSheet();
+     
 
       // create some billingdetails
       final billingDetails = BillingDetails(
@@ -449,14 +405,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
           // Extra params
           primaryButtonLabel: 'Pay now',
-          applePay: PaymentSheetApplePay(
-            merchantCountryCode: 'DE',
-          ),
-          googlePay: PaymentSheetGooglePay(
-            merchantCountryCode: 'DE',
-            testEnv: true,
-            buttonType: PlatformButtonType.book,
-          ),
+          // applePay: PaymentSheetApplePay(
+          //   merchantCountryCode: 'DE',
+          // ),
+          // googlePay: PaymentSheetGooglePay(
+          //   merchantCountryCode: 'DE',
+          //   testEnv: true,
+          //   buttonType: PlatformButtonType.book,
+          // ),
           style: ThemeMode.dark,
           appearance: PaymentSheetAppearance(
             colors: PaymentSheetAppearanceColors(
@@ -493,6 +449,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> confirmPayment() async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
+    if (verificationSuccessful == false){
+       scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('Please confirm phone number!'),
+          ),
+        );
+        return;
+    }
     try {
       // 3. display the payment sheet.
       await Stripe.instance.presentPaymentSheet();
@@ -502,11 +466,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
       });
 
       if (context.mounted) {
+
         scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text('Payment successfully completed'),
           ),
         );
+         String buyerAddress = _addressController.text;
+                    String buyerPhone = _phoneController.text;
+
+                    // Update Firestore with buyer details
+                    await FirebaseFirestore.instance.collection('orders').doc(widget.orderId).update({
+                      'buyer_address': buyerAddress,
+                      'buyer_phone': buyerPhone,
+                      'available': true
+                    });
+
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CardHolderFindingScreen(orderId: widget.orderId),
+                      ),
+                    );
+
       }
     } on Exception catch (e) {
       if (e is StripeException) {
