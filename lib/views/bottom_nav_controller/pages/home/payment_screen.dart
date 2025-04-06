@@ -164,19 +164,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(height: 20),
 
               // Payment Methods Section
-              const Text(
-                'Payment Method',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              PaymentMethodTile(
-                icon: Icons.credit_card,
-                title: 'GPay',
-                onTap: () {
-                  // Handle card payment
-                  showSnackbar(context, 'Selected Credit/Debit Card');
-                },
-              ),
+              // const Text(
+              //   'Payment Method',
+              //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 10),
+              // PaymentMethodTile(
+              //   icon: Icons.credit_card,
+              //   title: 'GPay',
+              //   onTap: () {
+              //     // Handle card payment
+              //     showSnackbar(context, 'Selected Credit/Debit Card');
+              //   },
+              // ),
               const SizedBox(height: 20),
 
               // Address and Phone Fields
