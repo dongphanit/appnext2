@@ -22,7 +22,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   String productDescription = "Loading...";
   String productImg = "Loading...";
   String priceDiscount = "Loading...";
-  String discountValue = "";
+  String discountValue = "0";
   String discountType= "";
 
   @override
@@ -33,7 +33,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Future<void> getSettings() async {
-      
       Map<String, dynamic>? data = await FirestoreServices().getSettings();
      discountType =  data?["discountType"];
      discountValue = data?["discountValue"];

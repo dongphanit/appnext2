@@ -57,7 +57,6 @@ Future<String> createOrder({
     throw Exception('Failed to create order: $e');
   }
 }
-
   // Function to fetch order details
   Future<Map<String, dynamic>?> getOrderDetails(String orderId) async {
     try {

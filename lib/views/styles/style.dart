@@ -5,14 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constant/app_colors.dart';
-import '../../main.dart';
+// import '../../main.dart';
 
 class AppStyle {
   TextStyle myTextStyle = TextStyle(
     fontSize: 30.sp,
     fontWeight: FontWeight.w600,
-    color:
-        themeManager.themeMode == ThemeMode.light ? Colors.black : Colors.white,
+    // color:
+    //     themeManager.themeMode == ThemeMode.light ? Colors.black : Colors.white,
   );
 
   TextStyle signUpTextStyle = TextStyle(
