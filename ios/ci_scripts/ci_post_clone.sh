@@ -24,6 +24,5 @@ brew install cocoapods
 
 # Install CocoaPods dependencies.
 cd ios
-pod update Firebase/Auth
 pod install --repo-update
 exit 0
