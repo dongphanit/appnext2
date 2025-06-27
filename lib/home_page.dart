@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habits/habit.dart';
+import 'package:habits/homework_reminder.dart';
 import 'package:intl/intl.dart';
 
 class HabitApp extends StatelessWidget {
@@ -18,7 +19,52 @@ class HabitApp extends StatelessWidget {
           bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
         ),
       ),
-      home: const HomeScreen(),
+      home: const MainTabController(),
+    );
+  }
+}
+
+class MainTabController extends StatefulWidget {
+  const MainTabController({super.key});
+
+  @override
+  State<MainTabController> createState() => _MainTabControllerState();
+}
+
+class _MainTabControllerState extends State<MainTabController> {
+  int _currentIndex = 0;
+
+  late List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const HomeScreen(),
+      ScheduleScreen(),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book, color: Colors.green),
+            label: 'Lịch học',
+            backgroundColor: Colors.white,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Colors.green),
+            label: 'Nhắc thói quen',
+            backgroundColor: Colors.white,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -33,7 +79,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Habit> habits = [];
 
-
   Future<void> _loadHabits() async {
     habits = await HabitDatabase.instance.getHabits();
     for (final habit in habits) {
@@ -44,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
             hour: int.parse(timeParts[0]),
             minute: int.parse(timeParts[1]),
           );
-          await HabitDatabase.instance.scheduleNotification(habit.title, timeOfDay, habit.id!);
+          await HabitDatabase.instance
+              .scheduleNotification(habit.title, timeOfDay, habit.id!);
         } else {
           debugPrint('Invalid time format for habit: ${habit.time}');
         }
@@ -59,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getToday() {
     final now = DateTime.now();
     // final weekday = DateFormat.EEEE('vi').format(now);
-    return '📅 Hôm nay: ';// $weekday, ${DateFormat('dd/MM/yyyy').format(now)}
+    return '📅 Hôm nay: '; // $weekday, ${DateFormat('dd/MM/yyyy').format(now)}
   }
 
   Future<void> _confirmDelete(int id) async {
@@ -69,8 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Xoá thói quen'),
         content: const Text('Bạn có chắc muốn xoá thói quen này?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Huỷ')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Xoá')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Huỷ')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Xoá')),
         ],
       ),
     );
@@ -79,155 +129,162 @@ class _HomeScreenState extends State<HomeScreen> {
       _loadHabits();
     }
   }
- 
-late BannerAd _bannerAd;
-bool _isBannerReady = false;
 
-@override
-void initState() {
-  super.initState();
-  _loadHabits();
-  _bannerAd = BannerAd(
-    adUnitId: 'ca-app-pub-4711642231404676/6804185643', // Replace with your real banner ID
-    size: AdSize.banner,
-    request: AdRequest(),
-    listener: BannerAdListener(
-      onAdLoaded: (_) {
-        setState(() {
-          _isBannerReady = true;
-        });
-      },
-      onAdFailedToLoad: (ad, error) {
-        ad.dispose();
-        debugPrint('Ad load failed (code=${error.code}): ${error.message}');
-      },
-    ),
-  )..load();
-}
+  late BannerAd _bannerAd;
+  bool _isBannerReady = false;
 
-@override
-void dispose() {
-  _bannerAd.dispose();
-  super.dispose();
-}
+  @override
+  void initState() {
+    super.initState();
+    _loadHabits();
+    _bannerAd = BannerAd(
+      adUnitId:
+          'ca-app-pub-4711642231404676/6804185643', // Replace with your real banner ID
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isBannerReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint('Ad load failed (code=${error.code}): ${error.message}');
+        },
+      ),
+    )..load();
+  }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('🌞 Xin chào, bạn!'),
-      backgroundColor: Colors.teal,
-    ),
-    body: Column(
-      children: [
-        if (_isBannerReady)
-          Container(
-            height: _bannerAd.size.height.toDouble(),
-            width: _bannerAd.size.width.toDouble(),
-            child: AdWidget(ad: _bannerAd),
-          ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _getToday(),
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: habits.isEmpty
-                      ? const Center(
-                          child: Text(
-                            'Chưa có thói quen nào.',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: habits.length,
-                          itemBuilder: (context, index) {
-                            final habit = habits[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              elevation: 4,
-                              child: ListTile(
-                                leading: Icon(
-                                  habit.isDone
-                                      ? Icons.check_circle
-                                      : Icons.circle_outlined,
-                                  color: habit.isDone ? Colors.green : Colors.grey,
-                                  size: 32,
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('🌞 Xin chào, bạn!'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Column(
+        children: [
+          if (_isBannerReady)
+            Container(
+              height: _bannerAd.size.height.toDouble(),
+              width: _bannerAd.size.width.toDouble(),
+              child: AdWidget(ad: _bannerAd),
+            ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _getToday(),
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: habits.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Chưa có thói quen nào.',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: habits.length,
+                            itemBuilder: (context, index) {
+                              final habit = habits[index];
+                              return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                title: Text(
-                                  habit.title,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                elevation: 4,
+                                child: ListTile(
+                                  leading: Icon(
+                                    habit.isDone
+                                        ? Icons.check_circle
+                                        : Icons.circle_outlined,
+                                    color: habit.isDone
+                                        ? Colors.green
+                                        : Colors.grey,
+                                    size: 32,
+                                  ),
+                                  title: Text(
+                                    habit.title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    '🔔 ${habit.time}',
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Checkbox(
+                                        value: habit.isDone,
+                                        onChanged: (val) async {
+                                          final updated = Habit(
+                                            id: habit.id,
+                                            title: habit.title,
+                                            time: habit.time,
+                                            isDone: val!,
+                                          );
+                                          await HabitDatabase.instance
+                                              .updateHabit(updated);
+                                          _loadHabits();
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () =>
+                                            _confirmDelete(habit.id!),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                subtitle: Text(
-                                  '🔔 ${habit.time}',
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Checkbox(
-                                      value: habit.isDone,
-                                      onChanged: (val) async {
-                                        final updated = Habit(
-                                          id: habit.id,
-                                          title: habit.title,
-                                          time: habit.time,
-                                          isDone: val!,
-                                        );
-                                        await HabitDatabase.instance.updateHabit(updated);
-                                        _loadHabits();
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () => _confirmDelete(habit.id!),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                )
-              ],
+                              );
+                            },
+                          ),
+                  )
+                ],
+              ),
             ),
           ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add, size: 28),
+        label: const Text(
+          'Thêm thói quen',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-      ],
-    ),
-    floatingActionButton: FloatingActionButton.extended(
-      icon: const Icon(Icons.add, size: 28),
-      label: const Text(
-        'Thêm thói quen',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddHabitScreen()),
+          );
+          _loadHabits();
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
-      backgroundColor: Colors.teal,
-      foregroundColor: Colors.white,
-      onPressed: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AddHabitScreen()),
-        );
-        _loadHabits();
-      },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class AddHabitScreen extends StatefulWidget {
@@ -284,7 +341,8 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                               context: context,
                               initialTime: selectedTime,
                             );
-                            if (time != null) setState(() => selectedTime = time);
+                            if (time != null)
+                              setState(() => selectedTime = time);
                           },
                           child: const Text('Chọn giờ'),
                         )
@@ -300,7 +358,8 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
               label: const Text('Lưu thói quen'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
               onPressed: () async {
                 if (_controller.text.isEmpty) return;
