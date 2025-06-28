@@ -3,6 +3,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habits/habit.dart';
 import 'package:habits/home_page.dart';
+import 'package:habits/homework_reminder.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +20,6 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-
   runApp(HabitTrackerApp());
 }
 
@@ -27,7 +29,7 @@ class HabitTrackerApp extends StatelessWidget {
     return MaterialApp(
       title: 'Habit Tracker',
       theme: ThemeData(primarySwatch: Colors.teal),
-      home: HomeScreen(),
+      home: MainTabController(),
     );
   }
 }
