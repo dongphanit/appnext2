@@ -26,10 +26,6 @@ Future<void> main() async {
 class HabitTrackerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Habit Tracker',
-      theme: ThemeData(primarySwatch: Colors.teal),
-      home: MainTabController(),
-    );
+    return HabitApp();
   }
 }

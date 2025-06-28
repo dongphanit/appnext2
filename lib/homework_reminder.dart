@@ -7,6 +7,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:habits/home_page.dart';
+import 'package:habits/reminder_intro_screen.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -101,32 +103,32 @@ class ReminderService {
     await _notifications.initialize(initSettings);
   }
 
-  static 
- Future<void> scheduleReminder(
-    String subject, DateTime dateTime) async {
-  final id = dateTime.weekday * 100 + dateTime.hour * 10 + dateTime.minute;
+  static Future<void> scheduleReminder(
+      String subject, DateTime dateTime) async {
+    final id = dateTime.weekday * 100 + dateTime.hour * 10 + dateTime.minute;
 
-  await _notifications.zonedSchedule(
-    id,
-    'Nhắc nhở làm bài tập',
-    'Đừng quên làm bài tập môn $subject nhé!',
-    tz.TZDateTime.from(dateTime, tz.local),
-    const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'homework_channel',
-        'Nhắc bài tập',
-        channelDescription: 'Nhắc bạn làm bài vào các ngày cố định trong tuần',
-        importance: Importance.high,
+    await _notifications.zonedSchedule(
+      id,
+      'Nhắc nhở làm bài tập',
+      'Đừng quên làm bài tập môn $subject nhé!',
+      tz.TZDateTime.from(dateTime, tz.local),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'homework_channel',
+          'Nhắc bài tập',
+          channelDescription:
+              'Nhắc bạn làm bài vào các ngày cố định trong tuần',
+          importance: Importance.high,
+        ),
       ),
-    ),
-    androidAllowWhileIdle: true,
-    uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
 
-    /// 🔁 Lặp lại hàng tuần vào đúng thứ và giờ
-    matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-  );
-}
+      /// 🔁 Lặp lại hàng tuần vào đúng thứ và giờ
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+    );
+  }
 }
 
 class ScheduleScreen extends StatefulWidget {
@@ -166,15 +168,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     'Friday'
   ];
   final Map<String, int> dayToWeekday = {
-  'Monday': DateTime.monday,
-  'Tuesday': DateTime.tuesday,
-  'Wednesday': DateTime.wednesday,
-  'Thursday': DateTime.thursday,
-  'Friday': DateTime.friday,
-};
+    'Monday': DateTime.monday,
+    'Tuesday': DateTime.tuesday,
+    'Wednesday': DateTime.wednesday,
+    'Thursday': DateTime.thursday,
+    'Friday': DateTime.friday,
+  };
 
   final Map<String, List<String?>> schedule = {};
-
+  bool _isSettingSchedule = false;
   @override
   void initState() {
     super.initState();
@@ -182,6 +184,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     for (var day in days) {
       schedule[day] = List.filled(5, null); // 5 tiết mỗi ngày
     }
+  }
+
+  Future<void> checkAndShowIntro(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final seenIntro = prefs.getBool('seen_intro') ?? false;
+
+    if (!seenIntro) {
+      showReminderIntro(context);
+      await prefs.setBool('seen_intro', true);
+    }
+  }
+
+  void showReminderIntro(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: SizedBox(
+          height: 500,
+          child: ReminderIntroScreen(),
+        ),
+      ),
+    );
   }
 
   StudySession selectedSession = StudySession.morning;
@@ -242,6 +268,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    checkAndShowIntro(context);
     return Scaffold(
         appBar: AppBar(title: Text('Lịch học tuần')),
         body: SingleChildScrollView(
@@ -251,6 +278,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           children: [
             Container(
               height: 210,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2))
+                ],
+              ),
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,118 +356,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ],
               ),
             ),
-            FutureBuilder<List<StudySchedule>>(
-              future: DatabaseService.getAllSchedules(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                final allSchedules = snapshot.data!;
-
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minWidth: constraints.maxWidth,
-                          ),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: IntrinsicWidth(
-                              child: Table(
-                                border: TableBorder.all(color: Colors.grey),
-                                columnWidths: const {
-                                  0: FixedColumnWidth(60),
-                                },
-                                defaultColumnWidth: FlexColumnWidth(),
-                                children: [
-                                  // Tiêu đề
-                                  TableRow(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(8),
-                                        color: Colors.blue[50],
-                                        child: Text('Tiết',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                      ),
-                                      ...days.map((day) => Container(
-                                            padding: EdgeInsets.all(8),
-                                            color: Colors.blue[50],
-                                            child: Text(day,
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          )),
-                                    ],
-                                  ),
-
-                                  // Hàng dữ liệu
-                                  for (int period = 1; period <= 5; period++)
-                                    TableRow(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(8),
-                                          color: Colors.blue[50],
-                                          child: Text('Tiết $period',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                        ...days.map((day) {
-                                          final item = allSchedules.firstWhere(
-                                            (s) =>
-                                                s.dayOfWeek == day &&
-                                                s.period == period,
-                                            orElse: () => StudySchedule(
-                                                dayOfWeek: day,
-                                                period: period,
-                                                subject: ''),
-                                          );
-
-                                          final isEmpty = item.subject.isEmpty;
-
-                                          return InkWell(
-                                            onTap: () => _showSubjectPicker(
-                                                context, day, period - 1),
-                                            child: Container(
-                                              padding: EdgeInsets.all(8),
-                                              height: 60,
-                                              color: isEmpty
-                                                  ? Colors.grey[100]
-                                                  : Colors.green[50],
-                                              child: Center(
-                                                child: Text(
-                                                  isEmpty
-                                                      ? 'Chưa có'
-                                                      : item.subject,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: isEmpty
-                                                        ? Colors.grey
-                                                        : Colors.black,
-                                                    fontWeight: isEmpty
-                                                        ? FontWeight.normal
-                                                        : FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                      ],
-                                    ),
-                                ],
-                              ),
-                            ),
-                          )),
-                    );
-                  },
-                );
-              },
+            // add nút thiết lập lịch để sổ giao diện, thêm bút checkbox
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                'Chọn lịch học của bạn',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
             ),
+            // add các môn học đã làm bài, khi làm bài xong sẽ tick vào môn đó để hoàn thành
+
+
+            // if checkbox is true, will show settingSchedule
+            // else will show empty container
+            // CheckboxListTile(
+            //   title: Text('Thiết lập lịch học'),
+            //   value: _isSettingSchedule,
+            //   onChanged: (value) {
+            //     setState(() {
+            //       _isSettingSchedule = value!;
+            //     });
+            //   },
+            // ),
+        settingSchedule(),
+
             SizedBox(height: 20),
             // Center(
             //   child: ElevatedButton.icon(
@@ -452,54 +401,188 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ],
         )));
   }
-DateTime getWeekdayOfCurrentWeek(int weekday) {
-  final now = DateTime.now();
 
-  /// Lấy ngày đầu tuần (Thứ 2)
-  final startOfWeek = now.subtract(Duration(days: now.weekday - DateTime.monday));
+  DateTime getWeekdayOfCurrentWeek(int weekday) {
+    final now = DateTime.now();
 
-  /// Cộng thêm để đến thứ mong muốn
-  final day = startOfWeek.add(Duration(days: weekday - DateTime.monday));
+    /// Lấy ngày đầu tuần (Thứ 2)
+    final startOfWeek =
+        now.subtract(Duration(days: now.weekday - DateTime.monday));
 
-  return DateTime(day.year, day.month, day.day); // reset giờ
-}
+    /// Cộng thêm để đến thứ mong muốn
+    final day = startOfWeek.add(Duration(days: weekday - DateTime.monday));
+
+    return DateTime(day.year, day.month, day.day); // reset giờ
+  }
+
+  Widget settingSchedule() {
+    return FutureBuilder<List<StudySchedule>>(
+      future: DatabaseService.getAllSchedules(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        final allSchedules = snapshot.data!;
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: constraints.maxWidth,
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: IntrinsicWidth(
+                      child: Table(
+                        border: TableBorder.all(color: Colors.grey),
+                        columnWidths: const {
+                          0: FixedColumnWidth(60),
+                        },
+                        defaultColumnWidth: FlexColumnWidth(),
+                        children: [
+                          // Tiêu đề
+                          TableRow(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                color: Colors.blue[50],
+                                child: Text('Tiết',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              ...days.map((day) => Container(
+                                    padding: EdgeInsets.all(8),
+                                    color: Colors.blue[50],
+                                    child: Text(day,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  )),
+                            ],
+                          ),
+
+                          // Hàng dữ liệu
+                          for (int period = 1; period <= 5; period++)
+                            TableRow(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(8),
+                                  color: Colors.blue[50],
+                                  child: Text('Tiết $period',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                ...days.map((day) {
+                                  final item = allSchedules.firstWhere(
+                                    (s) =>
+                                        s.dayOfWeek == day &&
+                                        s.period == period,
+                                    orElse: () => StudySchedule(
+                                        dayOfWeek: day,
+                                        period: period,
+                                        subject: ''),
+                                  );
+
+                                  final isEmpty = item.subject.isEmpty;
+
+                                  return InkWell(
+                                    onTap: () => _showSubjectPicker(
+                                        context, day, period - 1),
+                                    child: Container(
+                                      padding: EdgeInsets.all(8),
+                                      height: 60,
+                                      color: isEmpty
+                                          ? Colors.grey[100]
+                                          : AppColors.secondary
+                                              .withOpacity(0.1),
+                                      child: Center(
+                                        child: Text(
+                                          isEmpty ? 'Chưa có' : item.subject,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: isEmpty
+                                                ? Colors.grey
+                                                : Colors.black,
+                                            fontWeight: isEmpty
+                                                ? FontWeight.normal
+                                                : FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  )),
+            );
+          },
+        );
+      },
+    );
+  }
 
   void _showSubjectPicker(BuildContext context, String day, int period) {
     showModalBottomSheet(
-      context: context,
-      builder: (context) => ListView(
-        children: subjects
-            .map((subject) => ListTile(
-                  title: Text(subject),
-                  onTap: () {
-                    DatabaseService.insertSchedule(
-                      StudySchedule(
-                          dayOfWeek: day, period: period + 1, subject: subject),
-                    );
+        context: context,
+        builder: (context) => Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: ListView(
+                children: subjects
+                    .map((subject) => ListTile(
+                          title: Text(subject),
+                          onTap: () {
+                            DatabaseService.insertSchedule(
+                              StudySchedule(
+                                  dayOfWeek: day,
+                                  period: period + 1,
+                                  subject: subject),
+                            );
 
-                    setState(() {
-                      schedule[day]![period] = subject;
-                      final weekday = dayToWeekday[day]!;
-  final dayDate = getWeekdayOfCurrentWeek(weekday); // hoặc getNextWeekday(weekday)
+                            setState(() {
+                              schedule[day]![period] = subject;
+                              final weekday = dayToWeekday[day]!;
+                              final dayDate = getWeekdayOfCurrentWeek(
+                                  weekday); // hoặc getNextWeekday(weekday)
 
-
-                      final now = DateTime.now();
-                      // Schedule reminders based on selected session
-                      final reminderTime =
-                          DateTime(now.year, now.month, dayDate.day, nextMorningTime.hour, nextMorningTime.minute);
-                          ReminderService.scheduleReminder(subject, reminderTime);
-                      ReminderService.scheduleReminder(subject, reminderTime);
-                      final reminderTime1 =
-                          DateTime(now.year, now.month,dayDate.day , afternoonTime.hour, afternoonTime.minute);
-                          ReminderService.scheduleReminder(subject, reminderTime);
-                      ReminderService.scheduleReminder(subject, reminderTime1);
-                    });
-                    Navigator.pop(context);
-                  },
-                ))
-            .toList(),
-      ),
-    );
+                              final now = DateTime.now();
+                              // Schedule reminders based on selected session
+                              final reminderTime = DateTime(
+                                  now.year,
+                                  now.month,
+                                  dayDate.day,
+                                  nextMorningTime.hour,
+                                  nextMorningTime.minute);
+                              ReminderService.scheduleReminder(
+                                  subject, reminderTime);
+                              ReminderService.scheduleReminder(
+                                  subject, reminderTime);
+                              final reminderTime1 = DateTime(
+                                  now.year,
+                                  now.month,
+                                  dayDate.day,
+                                  afternoonTime.hour,
+                                  afternoonTime.minute);
+                              ReminderService.scheduleReminder(
+                                  subject, reminderTime);
+                              ReminderService.scheduleReminder(
+                                  subject, reminderTime1);
+                            });
+                            Navigator.pop(context);
+                          },
+                        ))
+                    .toList(),
+              ),
+            ));
   }
 }
 
