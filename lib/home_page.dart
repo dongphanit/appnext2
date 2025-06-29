@@ -289,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('🌞 Xin chào, bạn!'),
-        backgroundColor: Colors.teal,
+        backgroundColor: AppColors.primary,
       ),
       body: Column(
         children: [
@@ -452,20 +452,26 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: const Icon(Icons.add, size: 28),
         label: const Text(
           'Thêm thói quen',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+          ),
         ),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.lightGreen,
         foregroundColor: Colors.white,
         onPressed: () async {
           await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddHabitScreen()),
+        context,
+        MaterialPageRoute(builder: (_) => const AddHabitScreen()),
           );
           _loadHabits();
         },
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
+        elevation: 8,
+        splashColor: Colors.greenAccent,
       ),
     );
   }

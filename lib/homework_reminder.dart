@@ -148,28 +148,29 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  final List<String> subjects = [
-    'Toán',
-    'Ngữ văn',
-    'Tiếng Anh',
-    'Vật lý',
-    'Hóa học',
-    'Sinh học',
-    'Lịch sử',
-    'Địa lý',
-    'Giáo dục công dân',
-    'Tin học',
-    'Công nghệ',
-    'Thể dục',
-    'Âm nhạc',
-    'Mỹ thuật',
-    'Tiếng Pháp',
-    'Tiếng Trung',
-    'Tiếng Nhật',
-    'Quốc phòng - An ninh',
-    'Hoạt động trải nghiệm',
-    'Nghề nghiệp - Hướng nghiệp'
-  ];
+ 
+Map<String, IconData> subjectIcons = {
+  'Toán': Icons.calculate,
+  'Ngữ văn': Icons.book,
+  'Tiếng Anh': Icons.language,
+  'Vật lý': Icons.space_dashboard,
+  'Hóa học': Icons.science,
+  'Sinh học': Icons.eco,
+  'Lịch sử': Icons.history_edu,
+  'Địa lý': Icons.public,
+  'Giáo dục công dân': Icons.people,
+  'Tin học': Icons.computer,
+  'Công nghệ': Icons.build,
+  'Thể dục': Icons.sports,
+  'Âm nhạc': Icons.music_note,
+  'Mỹ thuật': Icons.brush,
+  'Tiếng Pháp': Icons.translate,
+  'Tiếng Trung': Icons.translate,
+  'Tiếng Nhật': Icons.translate,
+  'Quốc phòng - An ninh': Icons.security,
+  'Hoạt động trải nghiệm': Icons.explore,
+  'Nghề nghiệp - Hướng nghiệp': Icons.work,
+};
 
   final List<String> days = [
     'Monday',
@@ -500,8 +501,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                   final isEmpty = item.subject.isEmpty;
 
                                   return InkWell(
-                                    onTap: () => _showSubjectPicker(
-                                        context, day, period - 1),
+                                    onTap: () => _showSubjectPickerWithIcons(
+                                        context, day, period - 1, subjectIcons.keys.toList()),
                                     child: Container(
                                       padding: EdgeInsets.all(8),
                                       height: 60,
@@ -539,63 +540,79 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  void _showSubjectPicker(BuildContext context, String day, int period) {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-              ),
-              child: ListView(
-                children: subjects
-                    .map((subject) => ListTile(
-                          title: Text(subject),
-                          onTap: () {
-                            DatabaseService.insertSchedule(
-                              StudySchedule(
-                                  dayOfWeek: day,
-                                  period: period + 1,
-                                  subject: subject),
-                            );
+void _showSubjectPickerWithIcons(BuildContext context, String day, int period, List<String> subjects) {
+  showModalBottomSheet(
+    context: context,
+    builder: (context) => Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      child: ListView(
+        children: subjects
+            .map((subject) => ListTile(
+                  leading: Icon(
+                    subjectIcons[subject] ?? Icons.help_outline,
+                    color: Colors.blue,
+                  ),
+                  title: Text(subject),
+                  onTap: () {
+                    DatabaseService.insertSchedule(
+                      StudySchedule(
+                          dayOfWeek: day, period: period + 1, subject: subject),
+                    );
 
-                            setState(() {
-                              schedule[day]![period] = subject;
-                              final weekday = dayToWeekday[day]!;
-                              final dayDate = getWeekdayOfCurrentWeek(
-                                  weekday); // hoặc getNextWeekday(weekday)
+                    setState(() {
+                      schedule[day]![period] = subject;
+                      final weekday = dayToWeekday[day]!;
+                      final dayDate = getWeekdayOfCurrentWeek(weekday);
 
-                              final now = DateTime.now();
-                              // Schedule reminders based on selected session
-                              final reminderTime = DateTime(
-                                  now.year,
-                                  now.month,
-                                  dayDate.day,
-                                  nextMorningTime.hour,
-                                  nextMorningTime.minute);
-                              ReminderService.scheduleReminder(
-                                  subject, reminderTime);
-                              ReminderService.scheduleReminder(
-                                  subject, reminderTime);
-                              final reminderTime1 = DateTime(
-                                  now.year,
-                                  now.month,
-                                  dayDate.day,
-                                  afternoonTime.hour,
-                                  afternoonTime.minute);
-                              ReminderService.scheduleReminder(
-                                  subject, reminderTime);
-                              ReminderService.scheduleReminder(
-                                  subject, reminderTime1);
-                            });
-                            Navigator.pop(context);
-                          },
-                        ))
-                    .toList(),
-              ),
-            ));
-  }
+                      final now = DateTime.now();
+                      final reminderTime = DateTime(
+                          now.year,
+                          now.month,
+                          dayDate.day,
+                          nextMorningTime.hour,
+                          nextMorningTime.minute);
+                      ReminderService.scheduleReminder(subject, reminderTime);
+
+                      final reminderTime1 = DateTime(
+                          now.year,
+                          now.month,
+                          dayDate.day,
+                          afternoonTime.hour,
+                          afternoonTime.minute);
+                      ReminderService.scheduleReminder(subject, reminderTime1);
+                    });
+                    Navigator.pop(context);
+                  },
+                ))
+            .toList(),
+      ),
+    ),
+  );
 }
+
+Widget subjectWithIcon(String subject) {
+  return Row(
+    children: [
+      Icon(
+        subjectIcons[subject] ?? Icons.help_outline,
+        size: 20,
+        color: Colors.blue,
+      ),
+      SizedBox(width: 8),
+      Expanded(
+        child: Text(
+          subject,
+          style: TextStyle(fontSize: 14),
+        ),
+      ),
+    ],
+  );
+}
+}
+
 
 class DailyScheduleScreen extends StatelessWidget {
   final String selectedDay;
