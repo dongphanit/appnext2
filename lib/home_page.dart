@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habits/habit.dart';
+import 'package:habits/home_intro_screen.dart';
 import 'package:habits/homework_reminder.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -80,8 +81,7 @@ class _MainTabControllerState extends State<MainTabController> {
   void initState() {
     super.initState();
     checkAndShowIntro(context);
-     _pages = [
-
+    _pages = [
       const HomeScreen(),
       ScheduleScreen(),
     ];
@@ -93,7 +93,6 @@ class _MainTabControllerState extends State<MainTabController> {
 
     if (!seenIntro) {
       _currentIndex = 1; // Start with the intro screen
-     
     }
   }
 
@@ -184,10 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late BannerAd _bannerAd;
   bool _isBannerReady = false;
-  Map<String, bool> _subjectToday = {
-
-
-  };
+  Map<String, bool> _subjectToday = {};
 
   @override
   void initState() {
@@ -213,21 +209,23 @@ class _HomeScreenState extends State<HomeScreen> {
     //   ),
     // )..load();
   }
+
   void loadSubjectToday() async {
-   
     // get dayOfWeek of today
     final now = DateTime.now();
-     
+
     final dayOfWeek = "Tuesday"; // DateFormat.EEEE('vi').format(now);
-       final schedules = await DatabaseService.getAllSchedules();
-      final daySchedules = schedules
-          .where((item) => item.dayOfWeek == dayOfWeek)
-          .toList()
-        ..sort((a, b) => a.period.compareTo(b.period));
-      setState(() {
-        _subjectToday = {for (var item in daySchedules.map((e) => e.subject)) item: true};
-      });
-    print(_subjectToday); 
+    final schedules = await DatabaseService.getAllSchedules();
+    final daySchedules = schedules
+        .where((item) => item.dayOfWeek == dayOfWeek)
+        .toList()
+      ..sort((a, b) => a.period.compareTo(b.period));
+    setState(() {
+      _subjectToday = {
+        for (var item in daySchedules.map((e) => e.subject)) item: true
+      };
+    });
+    print(_subjectToday);
     final prefs = await SharedPreferences.getInstance();
     final lastSavedDate = prefs.getString('lastSavedDate');
     final todayDate = DateFormat('yyyy-MM-dd').format(now);
@@ -240,14 +238,43 @@ class _HomeScreenState extends State<HomeScreen> {
     final saveToday = prefs.getStringList('subjectToday') ?? [];
     // Update only the values of _subjectToday based on saveToday
     if (saveToday.isNotEmpty) {
-      for (int i = 0; i < saveToday.length && i < _subjectToday.keys.length; i++) {
-      _subjectToday[_subjectToday.keys.elementAt(i)] = saveToday[i] == 'true';
+      for (int i = 0;
+          i < saveToday.length && i < _subjectToday.keys.length;
+          i++) {
+        _subjectToday[_subjectToday.keys.elementAt(i)] = saveToday[i] == 'true';
       }
     }
     print(saveToday);
+  }
 
-    
-  
+  Future<void> checkAndShowIntro(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final seenIntro = prefs.getBool('seen_home_intro') ?? false;
+
+    if (!seenIntro) {
+      showReminderIntro(context);
+      await prefs.setBool('seen_home_intro', true);
+    }
+  }
+
+  void showReminderIntro(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: SizedBox(
+          height: 500,
+          child: introductionStep(
+            () {
+              Navigator.pop(context);
+              // close dialog
+            
+            },
+        ),
+      ),
+    ),
+    );
   }
 
   @override
@@ -258,9 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("asdsadasd: $_subjectToday");
-    }
+    checkAndShowIntro(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('🌞 Xin chào, bạn!'),
@@ -281,133 +306,140 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                  _getToday(),
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    _getToday(),
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 12),
                   Expanded(
-                  child: habits.isEmpty
-                    ? const Center(
-                      child: Text(
-                        'Chưa có thói quen nào.',
-                        style:
-                          TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                      )
-                    : ListView.builder(
-                      itemCount: habits.length,
-                      itemBuilder: (context, index) {
-                        final habit = habits[index];
-                        return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 4,
-                        child: ListTile(
-                          leading: Icon(
-                          habit.isDone
-                            ? Icons.check_circle
-                            : Icons.circle_outlined,
-                          color: habit.isDone
-                            ? Colors.green
-                            : Colors.grey,
-                          size: 32,
-                          ),
-                          title: Text(
-                          habit.title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                          ),
-                          subtitle: Text(
-                          '🔔 ${habit.time}',
-                          style: const TextStyle(color: Colors.grey),
-                          ),
-                          trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Checkbox(
-                            value: habit.isDone,
-                            onChanged: (val) async {
-                              final updated = Habit(
-                              id: habit.id,
-                              title: habit.title,
-                              time: habit.time,
-                              isDone: val!,
+                    child: habits.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Chưa có thói quen nào.',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: habits.length,
+                            itemBuilder: (context, index) {
+                              final habit = habits[index];
+                              return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 4,
+                                child: ListTile(
+                                  leading: Icon(
+                                    habit.isDone
+                                        ? Icons.check_circle
+                                        : Icons.circle_outlined,
+                                    color: habit.isDone
+                                        ? Colors.green
+                                        : Colors.grey,
+                                    size: 32,
+                                  ),
+                                  title: Text(
+                                    habit.title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    '🔔 ${habit.time}',
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Checkbox(
+                                        value: habit.isDone,
+                                        onChanged: (val) async {
+                                          final updated = Habit(
+                                            id: habit.id,
+                                            title: habit.title,
+                                            time: habit.time,
+                                            isDone: val!,
+                                          );
+                                          await HabitDatabase.instance
+                                              .updateHabit(updated);
+                                          _loadHabits();
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () =>
+                                            _confirmDelete(habit.id!),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               );
-                              await HabitDatabase.instance
-                                .updateHabit(updated);
-                              _loadHabits();
                             },
-                            ),
-                            IconButton(
-                            icon: const Icon(Icons.delete,
-                              color: Colors.red),
-                            onPressed: () =>
-                              _confirmDelete(habit.id!),
-                            ),
-                          ],
                           ),
-                        ),
-                        );
-                      },
-                      ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                  '📚 Môn học hôm nay:',
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    '📚 Môn học hôm nay:',
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 12),
                   Expanded(
-                  child: ListView(
-                    children: _subjectToday.entries.map((entry) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 4,
-                      child: ListTile(
-                      // leading: Icon(
-                      //   entry.value ? Icons.check_circle : Icons.circle_outlined,
-                      //   color: entry.value ? Colors.green : Colors.grey,
-                      //   size: 32,
-                      // ),
-                      title: Text(
-                        entry.key,
-                        style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        ),
-                      ),
-                      subtitle: Text(
-                        entry.value ? '✅ Đã hoàn thành' : '⏳ Chưa hoàn thành',
-                        style: TextStyle(
-                        color: entry.value ? Colors.green : Colors.grey,
-                        ),
-                      ),
-                      trailing: Checkbox(
-                        value: entry.value,
-                        onChanged: (val) {
-                        final prefs = SharedPreferences.getInstance();
-                        // re save _subjectToday to shared preferences
-                        prefs.then((prefs) {
-                          final updatedSubjects = Map<String, bool>.from(_subjectToday);
-                          updatedSubjects[entry.key] = val!;
-                          prefs.setStringList('subjectToday', updatedSubjects.values.map((e) => e.toString()).toList());
-                        }); 
-                        setState(() {
-                          _subjectToday[entry.key] = val!;
-                        });
-                        },
-                      ),
-                      ),
-                    );
-                    }).toList(),
-                  ),
+                    child: ListView(
+                      children: _subjectToday.entries.map((entry) {
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 4,
+                          child: ListTile(
+                            // leading: Icon(
+                            //   entry.value ? Icons.check_circle : Icons.circle_outlined,
+                            //   color: entry.value ? Colors.green : Colors.grey,
+                            //   size: 32,
+                            // ),
+                            title: Text(
+                              entry.key,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            subtitle: Text(
+                              entry.value
+                                  ? '✅ Đã hoàn thành'
+                                  : '⏳ Chưa hoàn thành',
+                              style: TextStyle(
+                                color: entry.value ? Colors.green : Colors.grey,
+                              ),
+                            ),
+                            trailing: Checkbox(
+                              value: entry.value,
+                              onChanged: (val) {
+                                final prefs = SharedPreferences.getInstance();
+                                // re save _subjectToday to shared preferences
+                                prefs.then((prefs) {
+                                  final updatedSubjects =
+                                      Map<String, bool>.from(_subjectToday);
+                                  updatedSubjects[entry.key] = val!;
+                                  prefs.setStringList(
+                                      'subjectToday',
+                                      updatedSubjects.values
+                                          .map((e) => e.toString())
+                                          .toList());
+                                });
+                                setState(() {
+                                  _subjectToday[entry.key] = val!;
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   const SizedBox(height: 40),
                 ],

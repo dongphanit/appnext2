@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:habits/home_page.dart';
-import 'package:habits/reminder_intro_screen.dart';
+import 'package:habits/setting_schedule_intro_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -26,7 +26,19 @@ class DatabaseService {
     final prefs = await SharedPreferences.getInstance();
     final currentList = await getAllSchedules();
 
-    currentList.add(item);
+    // Check if the schedule already exists
+    final existingIndex = currentList.indexWhere(
+      (schedule) => schedule.dayOfWeek == item.dayOfWeek && schedule.period == item.period,
+    );
+
+    if (existingIndex != -1) {
+      // Update the existing schedule
+      currentList[existingIndex] = item;
+    } else {
+      // Add the new schedule
+      currentList.add(item);
+    }
+
     final encodedList = currentList.map((e) => jsonEncode(e.toJson())).toList();
     await prefs.setStringList(key, encodedList);
   }
@@ -203,7 +215,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: SizedBox(
           height: 500,
-          child: ReminderIntroScreen(),
+          child: SettingIntroScreen(),
         ),
       ),
     );

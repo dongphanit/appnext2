@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-class ReminderIntroScreen extends StatelessWidget {
-  const ReminderIntroScreen({super.key});
+class SettingIntroScreen extends StatelessWidget {
+  const SettingIntroScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
