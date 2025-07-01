@@ -52,7 +52,7 @@ Widget introductionStep(Function callBack) {
         // Title
 
         Text(
-            'Ứng dụng giúp bạn xây dựng thói quen học tập và sinh hoạt hiệu quả.',
+            'Ứng dụng giúp bạn xây dựng Nhắc nhở học tập và sinh hoạt hiệu quả.',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 16,
@@ -63,7 +63,7 @@ Widget introductionStep(Function callBack) {
         const SizedBox(height: 5),
         // Example habits text
         Text(
-            'Dưới đây là một số thói quen bạn có thể áp dụng để nâng cao hiệu quả học tập:',
+            'Dưới đây là một số Nhắc nhở bạn có thể áp dụng để nâng cao hiệu quả học tập:',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 10,
@@ -85,7 +85,7 @@ Widget introductionStep(Function callBack) {
           buildHabit('📔 Học từ vựng mới mỗi ngày (5–10 từ)',
               '→ Tăng vốn từ tiếng Anh hoặc môn học khác bằng flashcard hoặc app từ vựng.'),
           buildHabit('⏰ Ôn bài vào một thời điểm cố định (ví dụ 19:00)',
-              '→ Tạo thói quen học đều đặn, tránh học dồn trước kỳ thi.'),
+              '→ Tạo Nhắc nhở học đều đặn, tránh học dồn trước kỳ thi.'),
         ]),
         buildSection('🌙 Buổi Tối', [
           buildHabit('✍️ Ghi lại cảm xúc cuối ngày',

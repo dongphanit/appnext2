@@ -104,7 +104,7 @@ class HabitDatabase {
 
   await flutterLocalNotificationsPlugin.zonedSchedule(
     id,
-    'Nhắc nhở thói quen',
+    'Nhắc nhở Nhắc nhở',
     title,
     adjustedTime.toLocal().timeZoneOffset as TZDateTime,
     notificationDetails,

@@ -12,14 +12,14 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('➕ Thêm thói quen')),
+      appBar: AppBar(title: Text('➕ Thêm Nhắc nhở')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: 'Tên thói quen'),
+              decoration: InputDecoration(labelText: 'Tên Nhắc nhở'),
             ),
             SizedBox(height: 16),
             Row(
@@ -41,7 +41,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
             Spacer(),
             ElevatedButton(
               onPressed: () {
-                // Lưu thói quen - thêm logic sau
+                // Lưu Nhắc nhở - thêm logic sau
                 Navigator.pop(context);
               },
               child: Text('Lưu'),

@@ -142,12 +142,12 @@ class ReminderService {
   }
 }
 
-class ScheduleScreen extends StatefulWidget {
+class SettingScheduleScreen extends StatefulWidget {
   @override
-  _ScheduleScreenState createState() => _ScheduleScreenState();
+  _SettingScheduleScreenState createState() => _SettingScheduleScreenState();
 }
 
-class _ScheduleScreenState extends State<ScheduleScreen> {
+class _SettingScheduleScreenState extends State<SettingScheduleScreen> {
  
 Map<String, IconData> subjectIcons = {
   'Toán': Icons.calculate,
@@ -614,10 +614,10 @@ Widget subjectWithIcon(String subject) {
 }
 
 
-class DailyScheduleScreen extends StatelessWidget {
+class DailySettingScheduleScreen extends StatelessWidget {
   final String selectedDay;
 
-  DailyScheduleScreen({required this.selectedDay});
+  DailySettingScheduleScreen({required this.selectedDay});
 
   @override
   Widget build(BuildContext context) {

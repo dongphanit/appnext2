@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habits/habit.dart';
 import 'package:habits/home_intro_screen.dart';
-import 'package:habits/homework_reminder.dart';
+import 'package:habits/schedule_screen.dart';
+import 'package:habits/setting_schedule_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,6 +85,9 @@ class _MainTabControllerState extends State<MainTabController> {
     _pages = [
       const HomeScreen(),
       ScheduleScreen(),
+      SettingScheduleScreen(
+      
+      ),
     ];
   }
 
@@ -106,7 +110,12 @@ class _MainTabControllerState extends State<MainTabController> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.book, color: Colors.green),
-            label: 'Lịch thói quen',
+            label: 'Lịch Nhắc nhở',
+            backgroundColor: Colors.white,
+          ),
+            BottomNavigationBarItem(
+            icon: Icon(Icons.book, color: Colors.green),
+            label: 'Lịch học',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
@@ -163,8 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Xoá thói quen'),
-        content: const Text('Bạn có chắc muốn xoá thói quen này?'),
+        title: const Text('Xoá Nhắc nhở'),
+        content: const Text('Bạn có chắc muốn xoá Nhắc nhở này?'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -183,68 +192,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late BannerAd _bannerAd;
   bool _isBannerReady = false;
-  Map<String, bool> _subjectToday = {};
 
   @override
   void initState() {
     super.initState();
     _loadHabits();
 
-    loadSubjectToday();
-    //   _bannerAd = BannerAd(
-    //   adUnitId:
-    //       'ca-app-pub-4711642231404676/6804185643', // Replace with your real banner ID
-    //   size: AdSize.banner,
-    //   request: AdRequest(),
-    //   listener: BannerAdListener(
-    //     onAdLoaded: (_) {
-    //       setState(() {
-    //         _isBannerReady = true;
-    //       });
-    //     },
-    //     onAdFailedToLoad: (ad, error) {
-    //       ad.dispose();
-    //       debugPrint('Ad load failed (code=${error.code}): ${error.message}');
-    //     },
-    //   ),
-    // )..load();
-  }
-
-  void loadSubjectToday() async {
-    // get dayOfWeek of today
-    final now = DateTime.now();
-
-    final dayOfWeek = "Tuesday"; // DateFormat.EEEE('vi').format(now);
-    final schedules = await DatabaseService.getAllSchedules();
-    final daySchedules = schedules
-        .where((item) => item.dayOfWeek == dayOfWeek)
-        .toList()
-      ..sort((a, b) => a.period.compareTo(b.period));
-    setState(() {
-      _subjectToday = {
-        for (var item in daySchedules.map((e) => e.subject)) item: true
-      };
-    });
-    print(_subjectToday);
-    final prefs = await SharedPreferences.getInstance();
-    final lastSavedDate = prefs.getString('lastSavedDate');
-    final todayDate = DateFormat('yyyy-MM-dd').format(now);
-
-    if (lastSavedDate != todayDate) {
-      prefs.setString('lastSavedDate', todayDate);
-      prefs.remove('subjectToday'); // Clear previous day's data
-    }
-
-    final saveToday = prefs.getStringList('subjectToday') ?? [];
-    // Update only the values of _subjectToday based on saveToday
-    if (saveToday.isNotEmpty) {
-      for (int i = 0;
-          i < saveToday.length && i < _subjectToday.keys.length;
-          i++) {
-        _subjectToday[_subjectToday.keys.elementAt(i)] = saveToday[i] == 'true';
-      }
-    }
-    print(saveToday);
+    
+      _bannerAd = BannerAd(
+      adUnitId:
+          'ca-app-pub-4711642231404676/6804185643', // Replace with your real banner ID
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isBannerReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint('Ad load failed (code=${error.code}): ${error.message}');
+        },
+      ),
+    )..load();
   }
 
   Future<void> checkAndShowIntro(BuildContext context) async {
@@ -314,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: habits.isEmpty
                         ? const Center(
                             child: Text(
-                              'Chưa có thói quen nào.',
+                              'Chưa có Nhắc nhở nào.',
                               style:
                                   TextStyle(fontSize: 18, color: Colors.grey),
                             ),
@@ -381,67 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    '📚 Môn học hôm nay:',
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: ListView(
-                      children: _subjectToday.entries.map((entry) {
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 4,
-                          child: ListTile(
-                            // leading: Icon(
-                            //   entry.value ? Icons.check_circle : Icons.circle_outlined,
-                            //   color: entry.value ? Colors.green : Colors.grey,
-                            //   size: 32,
-                            // ),
-                            title: Text(
-                              entry.key,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            subtitle: Text(
-                              entry.value
-                                  ? '✅ Đã hoàn thành'
-                                  : '⏳ Chưa hoàn thành',
-                              style: TextStyle(
-                                color: entry.value ? Colors.green : Colors.grey,
-                              ),
-                            ),
-                            trailing: Checkbox(
-                              value: entry.value,
-                              onChanged: (val) {
-                                final prefs = SharedPreferences.getInstance();
-                                // re save _subjectToday to shared preferences
-                                prefs.then((prefs) {
-                                  final updatedSubjects =
-                                      Map<String, bool>.from(_subjectToday);
-                                  updatedSubjects[entry.key] = val!;
-                                  prefs.setStringList(
-                                      'subjectToday',
-                                      updatedSubjects.values
-                                          .map((e) => e.toString())
-                                          .toList());
-                                });
-                                setState(() {
-                                  _subjectToday[entry.key] = val!;
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+                 
                 ],
               ),
             ),
@@ -451,14 +362,14 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add, size: 28),
         label: const Text(
-          'Thêm thói quen',
+          'Thêm nhắc nhở',
           style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
         color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         onPressed: () async {
           await Navigator.push(
@@ -492,7 +403,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('➕ Thêm thói quen'),
+        title: const Text('➕ Thêm Nhắc nhở'),
         backgroundColor: Colors.teal,
       ),
       body: Padding(
@@ -511,7 +422,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                     TextField(
                       controller: _controller,
                       decoration: const InputDecoration(
-                        labelText: 'Tên thói quen',
+                        labelText: 'Tên Nhắc nhở',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -545,7 +456,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
             const Spacer(),
             ElevatedButton.icon(
               icon: const Icon(Icons.save),
-              label: const Text('Lưu thói quen'),
+              label: const Text('Lưu Nhắc nhở'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
                 padding:

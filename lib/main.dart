@@ -3,7 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habits/habit.dart';
 import 'package:habits/home_page.dart';
-import 'package:habits/homework_reminder.dart';
+import 'package:habits/setting_schedule_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
