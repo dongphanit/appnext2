@@ -211,6 +211,17 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         onAdFailedToLoad: (ad, error) {
+          // show error
+          AlertDialog(
+            title: const Text('Ad Load Failed'),
+            content: Text('Failed to load ad: ${error.message}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          );
           ad.dispose();
           debugPrint('Ad load failed (code=${error.code}): ${error.message}');
         },
@@ -264,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          if (_isBannerReady)
+          if (true)
             Container(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),
