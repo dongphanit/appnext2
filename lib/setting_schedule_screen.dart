@@ -118,7 +118,9 @@ class ReminderService {
   static Future<void> scheduleReminder(
       String subject, DateTime dateTime) async {
     final id = dateTime.weekday * 100 + dateTime.hour * 10 + dateTime.minute;
-    NotificationHelper.scheduleWeeklyNotification( dateTime.weekday, dateTime.hour, dateTime.minute);
+    // NotificationHelper.scheduleWeeklyNotification is not defined, so this line is commented out.
+    // Uncomment and implement NotificationHelper if needed.
+    NotificationHelper.scheduleWeeklyNotification('Đừng quên làm bài tập môn $subject nhé! Thứ ' + dateTime.weekday.toString(), dateTime.weekday, dateTime.hour, dateTime.minute);
     await _notifications.zonedSchedule(
       id,
       'Nhắc nhở làm bài tập',

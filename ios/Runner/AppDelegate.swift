@@ -20,19 +20,21 @@ import UserNotifications
       channel.setMethodCallHandler { (call, result) in
         if call.method == "scheduleDailyNotification" {
           if let args = call.arguments as? [String: Any],
+          let content = args["content"] as? String,
              let hour = args["hour"] as? Int,
              let minute = args["minute"] as? Int {
-            self.scheduleDailyNotification(atHour: hour, minute: minute)
+            self.scheduleDailyNotification(content: content, atHour: hour, minute: minute)
             result("✅ Daily notification scheduled at \(hour):\(minute)")
           } else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing hour or minute", details: nil))
           }
         } else if call.method == "scheduleWeeklyNotification" {
           if let args = call.arguments as? [String: Any],
+          let content = args["content"] as? String,
              let weekday = args["weekday"] as? Int,
              let hour = args["hour"] as? Int,
              let minute = args["minute"] as? Int {
-            self.scheduleWeeklyNotification(onWeekday: weekday, hour: hour, minute: minute)
+            self.scheduleWeeklyNotification(onWeekday: weekday, content: content, hour: hour, minute: minute)
             result("✅ Weekly notification scheduled for weekday \(weekday) at \(hour):\(minute)")
           } else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing weekday, hour, or minute", details: nil))
@@ -52,10 +54,10 @@ import UserNotifications
   }
 
   // Thông báo hàng ngày
-  func scheduleDailyNotification(atHour hour: Int, minute: Int) {
+  func scheduleDailyNotification( content: String, atHour hour: Int, minute: Int) {
     let content = UNMutableNotificationContent()
-    content.title = "Thông báo định kỳ"
-    content.body = "Thông báo mỗi ngày lúc \(hour):\(String(format: "%02d", minute))"
+    content.title = "Nhắc nhở"
+    content.body = content
     content.sound = .default
 
     var dateComponents = DateComponents()
@@ -80,10 +82,10 @@ import UserNotifications
   }
 
   // Thông báo hàng tuần
-  func scheduleWeeklyNotification(onWeekday weekday: Int, hour: Int, minute: Int) {
+  func scheduleWeeklyNotification(onWeekday weekday: Int, content: String, hour: Int, minute: Int) {
     let content = UNMutableNotificationContent()
-    content.title = "Thông báo hàng tuần"
-    content.body = "Thông báo lúc \(hour):\(String(format: "%02d", minute)) vào thứ \(weekday)"
+    content.title = "Nhắc nhở"
+    content.body = content
     content.sound = .default
 
     var dateComponents = DateComponents()

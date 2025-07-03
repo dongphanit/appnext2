@@ -43,7 +43,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     // get dayOfWeek of today
     final now = DateTime.now();
 
-    final dayOfWeek = "Tuesday"; // DateFormat.EEEE('vi').format(now);
+    final dayOfWeek = now.weekday; // DateFormat.EEEE('vi').format(now);
     final schedules = await DatabaseService.getAllSchedules();
     final daySchedules = schedules
         .where((item) => item.dayOfWeek == dayOfWeek)

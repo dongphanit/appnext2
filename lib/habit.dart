@@ -102,7 +102,7 @@ class HabitDatabase {
   final minute = time.minute;
   final scheduledTime = DateTime(now.year, now.month, now.day, hour, minute);
   final adjustedTime = scheduledTime.isBefore(now) ? scheduledTime.add(const Duration(days: 1)) : scheduledTime;
-NotificationHelper.scheduleDailyNotification(  hour, minute);
+NotificationHelper.scheduleDailyNotification(title,  hour, minute);
   await flutterLocalNotificationsPlugin.zonedSchedule(
     id,
     'Nhắc nhở Nhắc nhở',
