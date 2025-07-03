@@ -19,7 +19,8 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   // cách test
-  flutterLocalNotificationsPlugin
+  Future.delayed( const Duration(seconds: 1), () async {
+   flutterLocalNotificationsPlugin
       .show(0, 'Test Notification', 'This is a test notification', const NotificationDetails(
         android: AndroidNotificationDetails(
           'your_channel_id',
@@ -31,8 +32,6 @@ Future<void> main() async {
         ),
         iOS: DarwinNotificationDetails(),
       ));
-
-
   final now = DateTime.now();
   await flutterLocalNotificationsPlugin.zonedSchedule(
     0,
@@ -53,6 +52,7 @@ Future<void> main() async {
     uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     matchDateTimeComponents: DateTimeComponents.time,
   );
+  });
   runApp(HabitTrackerApp());
 }
 
