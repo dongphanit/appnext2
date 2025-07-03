@@ -23,7 +23,7 @@ import UserNotifications
           let content = args["content"] as? String,
              let hour = args["hour"] as? Int,
              let minute = args["minute"] as? Int {
-            self.scheduleDailyNotification(content: content, atHour: hour, minute: minute)
+            self.scheduleDailyNotification(bodyText: content, atHour: hour, minute: minute)
             result("✅ Daily notification scheduled at \(hour):\(minute)")
           } else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing hour or minute", details: nil))
@@ -34,7 +34,7 @@ import UserNotifications
              let weekday = args["weekday"] as? Int,
              let hour = args["hour"] as? Int,
              let minute = args["minute"] as? Int {
-            self.scheduleWeeklyNotification(onWeekday: weekday, content: content, hour: hour, minute: minute)
+            self.scheduleWeeklyNotification(onWeekday: weekday, bodyText: content, hour: hour, minute: minute)
             result("✅ Weekly notification scheduled for weekday \(weekday) at \(hour):\(minute)")
           } else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing weekday, hour, or minute", details: nil))
@@ -54,10 +54,10 @@ import UserNotifications
   }
 
   // Thông báo hàng ngày
-  func scheduleDailyNotification( content: String, atHour hour: Int, minute: Int) {
+  func scheduleDailyNotification( bodyText: String, atHour hour: Int, minute: Int) {
     let content = UNMutableNotificationContent()
     content.title = "Nhắc nhở"
-    content.body = content
+    content.body = bodyText
     content.sound = .default
 
     var dateComponents = DateComponents()
@@ -82,10 +82,10 @@ import UserNotifications
   }
 
   // Thông báo hàng tuần
-  func scheduleWeeklyNotification(onWeekday weekday: Int, content: String, hour: Int, minute: Int) {
+  func scheduleWeeklyNotification(onWeekday weekday: Int, bodyText: String, hour: Int, minute: Int) {
     let content = UNMutableNotificationContent()
     content.title = "Nhắc nhở"
-    content.body = content
+    content.body = bodyText
     content.sound = .default
 
     var dateComponents = DateComponents()
