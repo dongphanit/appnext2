@@ -274,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           if (_isBannerReady)
-            Container(
+            SizedBox(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),
               child: AdWidget(ad: _bannerAd),
