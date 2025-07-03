@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:habits/notifi_helper.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -101,7 +102,7 @@ class HabitDatabase {
   final minute = time.minute;
   final scheduledTime = DateTime(now.year, now.month, now.day, hour, minute);
   final adjustedTime = scheduledTime.isBefore(now) ? scheduledTime.add(const Duration(days: 1)) : scheduledTime;
-
+NotificationHelper.scheduleDailyNotification(  hour, minute);
   await flutterLocalNotificationsPlugin.zonedSchedule(
     id,
     'Nhắc nhở Nhắc nhở',

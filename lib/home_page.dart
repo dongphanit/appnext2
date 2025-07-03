@@ -197,8 +197,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadHabits();
-
-    
       _bannerAd = BannerAd(
       adUnitId:
           'ca-app-pub-4711642231404676/6804185643', // Replace with your real banner ID
@@ -275,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          if (true)
+          if (_isBannerReady)
             Container(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),

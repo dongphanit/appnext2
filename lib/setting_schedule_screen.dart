@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:habits/home_page.dart';
+import 'package:habits/notifi_helper.dart';
 import 'package:habits/setting_schedule_intro_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -117,7 +118,7 @@ class ReminderService {
   static Future<void> scheduleReminder(
       String subject, DateTime dateTime) async {
     final id = dateTime.weekday * 100 + dateTime.hour * 10 + dateTime.minute;
-
+    NotificationHelper.scheduleWeeklyNotification( dateTime.weekday, dateTime.hour, dateTime.minute);
     await _notifications.zonedSchedule(
       id,
       'Nhắc nhở làm bài tập',
