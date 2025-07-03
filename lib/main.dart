@@ -18,41 +18,7 @@ Future<void> main() async {
     iOS: initializationSettingsIOS,
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  // cách test
-  Future.delayed( const Duration(seconds: 1), () async {
-   flutterLocalNotificationsPlugin
-      .show(0, 'Test Notification', 'This is a test notification', const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'your_channel_id',
-          'your_channel_name',
-          channelDescription: 'your_channel_description',
-          importance: Importance.max,
-          priority: Priority.high,
-          showWhen: false,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ));
-  final now = DateTime.now();
-  await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'Nhắc nhở Nhắc nhở',
-    'Đây là một thông báo nhắc nhở',
-    TZDateTime.from(now, local).add(const Duration(seconds: 5)), // Thời gian nhắc nhở
-    const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'habit_channel',
-        'Habit Reminders',
-        channelDescription: 'Reminders to complete your habits',
-        importance: Importance.max,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
-    ),
-    androidAllowWhileIdle: true,
-    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    matchDateTimeComponents: DateTimeComponents.time,
-  );
-  });
+
   runApp(HabitTrackerApp());
 }
 
