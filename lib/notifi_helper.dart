@@ -16,6 +16,17 @@ class NotificationHelper {
       print("❌ Daily Failed: ${e.message}");
     }
   }
+   static Future<void> cancelDailyNotification (int hour, int minute) async {
+    try {
+      final result = await platform.invokeMethod('cancelDailyNotification', {
+        'hour': hour,
+        'minute': minute,
+      });
+      print(result);
+    } on PlatformException catch (e) {
+      print("❌ Cancel Daily Failed: ${e.message}");
+    }
+  }
 
   // Gửi notification hàng tuần (theo thứ)
   static Future<void> scheduleWeeklyNotification( String content,int weekday, int hour, int minute) async {

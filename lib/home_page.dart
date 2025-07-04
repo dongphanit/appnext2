@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habits/habit.dart';
 import 'package:habits/home_intro_screen.dart';
+import 'package:habits/notifi_helper.dart';
 import 'package:habits/schedule_screen.dart';
 import 'package:habits/setting_schedule_screen.dart';
 import 'package:intl/intl.dart';
@@ -168,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return '📅 Hôm nay: '; // $weekday, ${DateFormat('dd/MM/yyyy').format(now)}
   }
 
-  Future<void> _confirmDelete(int id) async {
+  Future<void> _confirmDelete(int id, String time) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -185,6 +186,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     if (confirmed == true) {
+      final parts = time.split(":");
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+
+       NotificationHelper.cancelDailyNotification(
+        hour,
+        minute,
+      );
       await HabitDatabase.instance.deleteHabit(id);
       _loadHabits();
     }
@@ -351,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         icon: const Icon(Icons.delete,
                                             color: Colors.red),
                                         onPressed: () =>
-                                            _confirmDelete(habit.id!),
+                                            _confirmDelete(habit.id!, habit.time),
                                       ),
                                     ],
                                   ),

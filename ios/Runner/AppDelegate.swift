@@ -18,6 +18,8 @@ import UserNotifications
                                          binaryMessenger: controller.binaryMessenger)
       
       channel.setMethodCallHandler { (call, result) in
+        // Xử lý các phương thức gọi từ Flutter
+        
         if call.method == "scheduleDailyNotification" {
           if let args = call.arguments as? [String: Any],
           let content = args["content"] as? String,
@@ -28,7 +30,20 @@ import UserNotifications
           } else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing hour or minute", details: nil))
           }
-        } else if call.method == "scheduleWeeklyNotification" {
+        }
+        //cancelDailyNotification
+        else if call.method == "cancelDailyNotification" {
+          if let args = call.arguments as? [String: Any],
+             let hour = args["hour"] as? Int,
+             let minute = args["minute"] as? Int {
+            self.cancelDailyNotification(atHour: hour, minute: minute)
+            result("✅ Daily notification cancelled at \(hour):\(minute)")
+          } else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing hour or minute", details: nil))
+          }
+        }
+        // Thông báo hàng tuần
+         else if call.method == "scheduleWeeklyNotification" {
           if let args = call.arguments as? [String: Any],
           let content = args["content"] as? String,
              let weekday = args["weekday"] as? Int,
@@ -71,6 +86,8 @@ import UserNotifications
       content: content,
       trigger: trigger
     )
+   
+
 
     UNUserNotificationCenter.current().add(request) { error in
       if let error = error {
@@ -80,6 +97,12 @@ import UserNotifications
       }
     }
   }
+   // Huỷ thông báo hằng ngày theo giờ và phút
+    func cancelDailyNotification(atHour hour: Int, minute: Int) {
+        let identifier = "daily_notification_\(hour)_\(minute)"
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+        print("🛑 Cancelled daily notification at \(hour):\(String(format: "%02d", minute))")
+    }
 
   // Thông báo hàng tuần
   func scheduleWeeklyNotification(onWeekday weekday: Int, bodyText: String, hour: Int, minute: Int) {

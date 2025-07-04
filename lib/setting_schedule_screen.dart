@@ -116,32 +116,32 @@ class ReminderService {
   }
 
   static Future<void> scheduleReminder(
-      String subject, DateTime dateTime) async {
-    final id = dateTime.weekday * 100 + dateTime.hour * 10 + dateTime.minute;
-    // NotificationHelper.scheduleWeeklyNotification is not defined, so this line is commented out.
+      String subject, TimeOfDay time) async {
+     // NotificationHelper.scheduleWeeklyNotification is not defined, so this line is commented out.
     // Uncomment and implement NotificationHelper if needed.
-    NotificationHelper.scheduleWeeklyNotification('Đừng quên làm bài tập môn $subject nhé! Thứ ' + dateTime.weekday.toString(), dateTime.weekday, dateTime.hour, dateTime.minute);
-    await _notifications.zonedSchedule(
-      id,
-      'Nhắc nhở làm bài tập',
-      'Đừng quên làm bài tập môn $subject nhé!',
-      tz.TZDateTime.from(dateTime, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'homework_channel',
-          'Nhắc bài tập',
-          channelDescription:
-              'Nhắc bạn làm bài vào các ngày cố định trong tuần',
-          importance: Importance.high,
-        ),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+    final now = DateTime.now();
+    NotificationHelper.scheduleDailyNotification('Đừng quên làm bài tập cho thứ ' + (now.weekday +1).toString(),  time.hour, time.minute);
+    // await _notifications.zonedSchedule(
+    //   id,
+    //   'Nhắc nhở làm bài tập',
+    //   'Đừng quên làm bài tập môn $subject nhé!',
+    //   tz.TZDateTime.from(dateTime, tz.local),
+    //   const NotificationDetails(
+    //     android: AndroidNotificationDetails(
+    //       'homework_channel',
+    //       'Nhắc bài tập',
+    //       channelDescription:
+    //           'Nhắc bạn làm bài vào các ngày cố định trong tuần',
+    //       importance: Importance.high,
+    //     ),
+    //   ),
+    //   androidAllowWhileIdle: true,
+    //   uiLocalNotificationDateInterpretation:
+    //       UILocalNotificationDateInterpretation.absoluteTime,
 
-      /// 🔁 Lặp lại hàng tuần vào đúng thứ và giờ
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-    );
+    //   /// 🔁 Lặp lại hàng tuần vào đúng thứ và giờ
+    //   matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+    // );
   }
 }
 
@@ -191,14 +191,15 @@ Map<String, IconData> subjectIcons = {
   };
 
   final Map<String, List<String?>> schedule = {};
-  bool _isSettingSchedule = false;
+  StudySession selectedSession = StudySession.morning;
   @override
   void initState() {
     super.initState();
-
-    for (var day in days) {
+    // notifi với selectedSession
+       for (var day in days) {
       schedule[day] = List.filled(5, null); // 5 tiết mỗi ngày
     }
+    _saveReminder();
   }
 
   Future<void> checkAndShowIntro(BuildContext context) async {
@@ -225,8 +226,6 @@ Map<String, IconData> subjectIcons = {
     );
   }
 
-  StudySession selectedSession = StudySession.morning;
-
   // Mặc định giờ nhắc
   TimeOfDay afternoonTime = TimeOfDay(hour: 13, minute: 0);
   TimeOfDay eveningTime = TimeOfDay(hour: 19, minute: 0);
@@ -249,27 +248,17 @@ Map<String, IconData> subjectIcons = {
   }
 
   void _saveReminder() {
-    String message = '';
-    switch (selectedSession) {
-      case StudySession.morning:
-        message =
-            'Tôi sẽ nhắc bạn làm bài vào chiều ${formatTime(afternoonTime)} và tối ${formatTime(eveningTime)}.';
-        break;
-      case StudySession.afternoon:
-        message =
-            'Tôi sẽ nhắc bạn làm bài vào tối ${formatTime(eveningTime)} và sáng hôm sau ${formatTime(nextMorningTime)}.';
-        break;
-      case StudySession.none:
-        message = 'Vui lòng chọn buổi học trước.';
-        break;
+   if (selectedSession == StudySession.morning) {
+    
+      ReminderService.scheduleReminder("", afternoonTime);
+      
+      ReminderService.scheduleReminder("", eveningTime);
+    } else if (selectedSession == StudySession.afternoon) {
+        ReminderService.scheduleReminder("", eveningTime);
+      ReminderService.scheduleReminder("", nextMorningTime);
     }
-    setState(() {
-      reminderMsg = message;
-    });
     // Notifi lịch nhắc với các môn học đã chọn
     // Bạn có thể sử dụng Flutter Local Notifications để hiển thị thông báo
-    ReminderService.scheduleReminder(
-        'Lịch học tuần', DateTime.now().add(Duration(days: 1)));
     // Ví dụ thông báo
     // Bạn có thể sử dụng ScaffoldMessenger để hiển thị thông báo tạm thời
     // Hoặc sử dụng một package khác để hiển thị thông báo
@@ -337,20 +326,41 @@ Map<String, IconData> subjectIcons = {
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w500)),
                   if (selectedSession == StudySession.morning) ...[
-                    ListTile(
-                      title: Text("Chiều: ${formatTime(afternoonTime)}",
-                          style: TextStyle(fontSize: 12)),
-                      trailing: Icon(Icons.access_time, size: 16),
-                      onTap: () => _pickTime(context, afternoonTime,
-                          (val) => setState(() => afternoonTime = val)),
-                    ),
-                    ListTile(
-                      title: Text("Tối: ${formatTime(eveningTime)}",
-                          style: TextStyle(fontSize: 12)),
-                      trailing: Icon(Icons.access_time, size: 16),
-                      onTap: () => _pickTime(context, eveningTime,
-                          (val) => setState(() => eveningTime = val)),
-                    ),
+                  ListTile(
+  title: Text("Chiều: ${formatTime(afternoonTime)}", style: TextStyle(fontSize: 12)),
+  trailing: Icon(Icons.access_time, size: 16),
+  onTap: () => _pickTime(
+    context,
+    afternoonTime,
+    (val) {
+      // Huỷ notification cũ
+      NotificationHelper.cancelDailyNotification(
+         afternoonTime.hour,
+         afternoonTime.minute,
+      );
+      // Cập nhật thời gian mới
+      setState(() => afternoonTime = val);
+    },
+  ),
+),
+ListTile(
+  title: Text("Tối: ${formatTime(eveningTime)}", style: TextStyle(fontSize: 12)),
+  trailing: Icon(Icons.access_time, size: 16),
+  onTap: () => _pickTime(
+    context,
+    eveningTime,
+    (val) {
+      // Huỷ notification cũ
+      NotificationHelper.cancelDailyNotification(
+         eveningTime.hour,
+         eveningTime.minute,
+      );
+      // Cập nhật thời gian mới
+      setState(() => eveningTime = val);
+    },
+  ),
+),
+
                   ],
                   if (selectedSession == StudySession.afternoon) ...[
                     ListTile(
@@ -577,7 +587,7 @@ void _showSubjectPickerWithIcons(BuildContext context, String day, int period, L
                           dayDate.day,
                           nextMorningTime.hour,
                           nextMorningTime.minute);
-                      ReminderService.scheduleReminder(subject, reminderTime);
+                      // ReminderService.scheduleReminder(subject, reminderTime);
 
                       final reminderTime1 = DateTime(
                           now.year,
@@ -585,7 +595,7 @@ void _showSubjectPickerWithIcons(BuildContext context, String day, int period, L
                           dayDate.day,
                           afternoonTime.hour,
                           afternoonTime.minute);
-                      ReminderService.scheduleReminder(subject, reminderTime1);
+                      // ReminderService.scheduleReminder(subject, reminderTime1);
                     });
                     Navigator.pop(context);
                   },
