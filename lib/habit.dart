@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:habits/notifi_helper.dart';
 import 'package:path/path.dart';
@@ -7,7 +5,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 class Habit {
   final int? id;
@@ -15,7 +14,8 @@ class Habit {
   final String time;
   final bool isDone;
 
-  Habit({this.id, required this.title, required this.time, this.isDone = false});
+  Habit(
+      {this.id, required this.title, required this.time, this.isDone = false});
 
   Map<String, dynamic> toMap() {
     return {
@@ -79,40 +79,44 @@ class HabitDatabase {
 
   Future<void> updateHabit(Habit habit) async {
     final db = await instance.database;
-    await db.update('habits', habit.toMap(), where: 'id = ?', whereArgs: [habit.id]);
+    await db.update('habits', habit.toMap(),
+        where: 'id = ?', whereArgs: [habit.id]);
   }
 
   Future<void> deleteHabit(int id) async {
     final db = await instance.database;
     await db.delete('habits', where: 'id = ?', whereArgs: [id]);
-  
   }
-  Future<void> scheduleNotification(String title, TimeOfDay time, int id) async {
-  final androidDetails = AndroidNotificationDetails(
-    'habit_channel',
-    'Habit Reminders',
-    channelDescription: 'Reminders to complete your habits',
-    importance: Importance.max,
-    priority: Priority.high,
-  );
-  final notificationDetails = NotificationDetails(android: androidDetails);
 
-  final now = DateTime.now();
-  final hour = time.hour;
-  final minute = time.minute;
-  final scheduledTime = DateTime(now.year, now.month, now.day, hour, minute);
-  final adjustedTime = scheduledTime.isBefore(now) ? scheduledTime.add(const Duration(days: 1)) : scheduledTime;
-NotificationHelper.scheduleDailyNotification(title,  hour, minute);
-  await flutterLocalNotificationsPlugin.zonedSchedule(
-    id,
-    'Nhắc nhở Nhắc nhở',
-    title,
-    adjustedTime.toLocal().timeZoneOffset as TZDateTime,
-    notificationDetails,
-    androidAllowWhileIdle: true,
-    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    matchDateTimeComponents: DateTimeComponents.time,
-  );
-}
-}
+  Future<void> scheduleNotification(
+      String title, TimeOfDay time, int id) async {
+    final androidDetails = AndroidNotificationDetails(
+      'habit_channel',
+      'Habit Reminders',
+      channelDescription: 'Reminders to complete your habits',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    final notificationDetails = NotificationDetails(android: androidDetails);
 
+    final now = DateTime.now();
+    final hour = time.hour;
+    final minute = time.minute;
+    final scheduledTime = DateTime(now.year, now.month, now.day, hour, minute);
+    final adjustedTime = scheduledTime.isBefore(now)
+        ? scheduledTime.add(const Duration(days: 1))
+        : scheduledTime;
+    NotificationHelper.scheduleDailyNotification(title, hour, minute);
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id,
+      'Nhắc nhở Nhắc nhở',
+      title,
+      adjustedTime.toLocal().timeZoneOffset as TZDateTime,
+      notificationDetails,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+}
