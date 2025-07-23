@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirestoreServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -53,6 +54,8 @@ class FirestoreServices {
     required bool isFree,
   }) async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      String avatar = prefs.getString('avatar') ?? '';
       DocumentReference postRef = await _firestore.collection('post').add({
         'deviceId': deviceId,
         'userInfo': userInfo,
@@ -65,6 +68,7 @@ class FirestoreServices {
         'price': price,
         'isFree': isFree,
         'gpsLat': gpsLat,
+        'avatar': avatar,
         'createdAt': FieldValue.serverTimestamp(),
       });
       return postRef.id;

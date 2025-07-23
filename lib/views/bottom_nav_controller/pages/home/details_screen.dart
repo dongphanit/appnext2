@@ -6,9 +6,11 @@ import 'package:url_launcher/url_launcher.dart';
 class DetailPage extends StatelessWidget {
   final String title;
    final String userInfo;
+  final String avatar;
   final String phone;
   final String image;
   final String location;
+  final String description;
   final String? gpsLat;
   final String? price;
   final bool isFree;
@@ -21,9 +23,11 @@ class DetailPage extends StatelessWidget {
     this.gpsLat,
     required this.phone,
     required this.location,
+    required this.description,
 
     this.price,
-    this.isFree = false,
+    this.isFree = false, 
+    required this.avatar,
   });
 
   @override
@@ -61,7 +65,7 @@ class DetailPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const CircleAvatar(radius: 24, backgroundImage: AssetImage('assets/icons/users.png')),
+                    CircleAvatar(radius: 24, backgroundImage: NetworkImage(ServerAddress.serverAddress + avatar)),
                     const SizedBox(width: 12),
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                        Text(userInfo, style: TextStyle(fontWeight: FontWeight.bold)),
@@ -111,7 +115,16 @@ class DetailPage extends StatelessWidget {
                       ),
                     ),
                   ],
-                )
+                ),
+                const SizedBox(height: 16),
+                // Description
+                const Text(
+                  "Mô tả:",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),  
+                Text(description, style: const TextStyle(fontSize: 16, color: Colors.black54)),
+                const SizedBox(height: 16),
               ],
             ),
           )

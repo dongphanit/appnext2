@@ -86,9 +86,7 @@ class _PostItemPageState extends State<PostItemPage> {
 
       if (bytes != null) {
         String base64Image = base64Encode(bytes);
-
         final uploader = ImageUploader();
-
         List<String> urls = await uploader.uploadImage(
           base64Image: base64Image,
           filename: file.name,

@@ -105,7 +105,8 @@ class _ChoLangHomePageState extends State<ChoLangHomePage> {
                           isFree: post['isFree'] ?? false,
                           price: post['price'].toString() ?? '0',
                           image: post['imageUrl'] ?? '',
-                          userInfo: post["userInfo"], // Placeholder image
+                          userInfo: post["userInfo"],
+                          avatar: post["avatar"], description: post["description"], // Placeholder image
                         ),
                       ),
                     );
@@ -203,104 +204,105 @@ class _ChoLangHomePageState extends State<ChoLangHomePage> {
   }
 
   Widget _buildItemCard({
-  required String image,
-  required String title,
-  required String location,
-  required String gpsLat,
-  required bool isFree,
-  String? price,
-}) {
-  return Card(
-    elevation: 3,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
-    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-    child: Container(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              ServerAddress.serverAddress + image,
-              width: 90,
-              height: 90,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
+    required String image,
+    required String title,
+    required String location,
+    required String gpsLat,
+    required bool isFree,
+    String? price,
+  }) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                ServerAddress.serverAddress + image,
                 width: 90,
                 height: 90,
-                color: Colors.grey[200],
-                child: const Icon(Icons.image_not_supported),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  width: 90,
+                  height: 90,
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.image_not_supported),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, color: Colors.grey, size: 14),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        location,
-                        style: const TextStyle(color: Colors.grey, fontSize: 13),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                FutureBuilder<double?>(
-                  future: calculateDistanceFromUser(gpsLat),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox(height: 16);
-                    }
-                    if (snapshot.hasData) {
-                      return Text(
-                        '📍 ${snapshot.data!.toStringAsFixed(2)} km',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey,
-                        ),
-                      );
-                    }
-                    return const Text(
-                      'Khoảng cách không rõ',
-                      style: TextStyle(fontSize: 13, color: Colors.grey),
-                    );
-                  },
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  isFree ? '🎁 Miễn phí' : '💰 ${price ?? 'Đang cập nhật'}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: isFree ? Colors.green : Colors.orange[800],
                   ),
-                )
-              ],
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on,
+                          color: Colors.grey, size: 14),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          location,
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 13),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  FutureBuilder<double?>(
+                    future: calculateDistanceFromUser(gpsLat),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox(height: 16);
+                      }
+                      if (snapshot.hasData) {
+                        return Text(
+                          '📍 ${snapshot.data!.toStringAsFixed(2)} km',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
+                        );
+                      }
+                      return const Text(
+                        'Khoảng cách không rõ',
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    isFree ? '🎁 Miễn phí' : '💰 ${price ?? 'Đang cập nhật'}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: isFree ? Colors.green : Colors.orange[800],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }
