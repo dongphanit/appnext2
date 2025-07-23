@@ -25,7 +25,7 @@ class SupportScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              supportMessageEng,
+              "Hỗ trợ",
               style: TextStyle(
                 fontSize: 18.sp,
               ),
@@ -34,9 +34,7 @@ class SupportScreen extends StatelessWidget {
             Divider(
               color: AppColors.textColor,
             ),
-            supportField("Phone".tr, "01752099119"),
-            supportField("Email".tr, "traveltorch@gmail.com"),
-            supportField("Facebook".tr, "http://facebook.com/traveltorch"),
+            supportField("Email".tr, "sportme.vietnam@gmail.com"),
           ],
         ),
       ),

@@ -61,16 +61,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.initState();
   }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && isAlertSet == false) {
-            showDialogBox("", "");
-            setState(() => isAlertSet = true);
-          }
-        } as void Function(List<ConnectivityResult> event)?,
-      );
+  // getConnectivity() =>
+  //     subscription = Connectivity().onConnectivityChanged.listen(
+  //       (ConnectivityResult result) async {
+  //         isDeviceConnected = await InternetConnectionChecker().hasConnection;
+  //         if (!isDeviceConnected && isAlertSet == false) {
+  //           showDialogBox("", "");
+  //           setState(() => isAlertSet = true);
+  //         }
+  //       } as void Function(List<ConnectivityResult> event)?,
+  //     );
 
   final List<String> items = [
     'Barishal',

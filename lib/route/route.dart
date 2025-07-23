@@ -33,56 +33,5 @@ const String navAddLastStep = '/navAddLastStep-screen';
 late User _user;
 List<GetPage> getPages = [
   GetPage(name: splash, page: () =>SplashScreen()),
-  // GetPage(name: signIn, page: () => LoginScreen()),
-  // GetPage(name: resetPassword, page: () => ResetPassword()),
-  // GetPage(name: see_all_hill, page: () => SeeAllHillPlace()),
-  // GetPage(name: see_all_topplace, page: () => AllTopPlace()),
-  // GetPage(name: see_all_sea, page: () => AllSeaPlace()),
-  // GetPage(name: see_all_park, page: () => SeeAllPark()),
-  // GetPage(name: supportScreen, page: () => Support()),
-  // // GetPage(name: userForm, page: () => UserForm()),
-  // GetPage(name: privacyPolicy, page: () => Privacy()),
-  // GetPage(
-  //   name: home_screen,
-  //   page: () => HomeScreens(),
-  // ),
-  // GetPage(
-  //   name: supportScreen,
-  //   page: () => Support(),
-  // ),
-  // GetPage(
-  //   name: privacyScreen,
-  //   page: () => Privacy(),
-  // ),
-  // GetPage(
-  //   name: faqScreen,
-  //   page: () =>FAQScreen(),
-  // ),
-  // GetPage(
-  //   name: howToUseScreen,
-  //   page: () => HowToUse(),
-  // ),
-  //   GetPage(
-  //   name: settingsScreen,
-  //   page: () => Settings(),
-  // ),
-  // GetPage(
-  //   name: seeAllScreen,
-  //   page: () {
-  //     SeeAllHillPlace _seeAll = Get.arguments;
-  //     return _seeAll;
-  //   },
-  // ),
-
-  // // !----------admin-----------------
-  // GetPage(name: adminHome, page: ()=>AdminHomeScreens()),
-  // GetPage(name: adminNavController, page: ()=>AdminNavController()),
-
-  // GetPage(
-  //   name: navAddLastStep,
-  //   page: () {
-  //     NavAddLastStep _addLastStep = Get.arguments;
-  //     return _addLastStep;
-  //   },
-  // ),
+ 
 ];

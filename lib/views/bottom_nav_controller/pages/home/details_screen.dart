@@ -1,273 +1,121 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/payment_screen.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as parser;
+import 'package:flutter_tour_app/constant/app_colors.dart';
+import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/upload.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ProductDetailsScreen extends StatefulWidget {
-  late String productUrl;
-  ProductDetailsScreen({required this.productUrl, Key? key}) : super(key: key);
+class DetailPage extends StatelessWidget {
+  final String title;
+   final String userInfo;
+  final String phone;
+  final String image;
+  final String location;
+  final String? gpsLat;
+  final String? price;
+  final bool isFree;
 
-  @override
-  _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
-}
+  const DetailPage({
+    super.key,
+    required this.title,
+    required this.image,
+     required this.userInfo,
+    this.gpsLat,
+    required this.phone,
+    required this.location,
 
-class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  String productName = "Loading...";
-  String price = "Loading...";
-  String productDescription = "Loading...";
-  String productImg = "Loading...";
-  String priceDiscount = "Loading...";
-
-  @override
-  void initState() {
-    super.initState();
-    fetchProductDetails();
-  }
-
-  // Hàm lấy dữ liệu sản phẩm
-  Future<void> fetchProductDetails() async {
-    // URL của sản phẩm trên Flipkart
-    final url = widget.productUrl;
-    // Gửi yêu cầu GET
-    final response = await http.get(Uri.parse(url), headers: {
-      // "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-    });
-
-    // Nếu yêu cầu thành công
-    if (response.statusCode == 200) {
-      // Phân tích HTML
-      var document = parser.parse(response.body);
-
-      // Lấy tên sản phẩm
-      var nameElement = document.querySelector("span.mEh187");
-      setState(() {
-        productName = nameElement != null ? nameElement.text.trim() : "N/A";
-      });
-
-      // Lấy giá sản phẩm
-      var priceElement = document.querySelector("div.Nx9bqj.CxhGGd");
-      var descriptionElement = document.querySelector("span.VU-ZEz");
-      var imageElement  = document.querySelector("img._53J4C- utBuJY");
-      
-      print(imageElement?.attributes['src'] ?? "N/A");
-      setState(() {
-        price = priceElement != null ? priceElement.text.trim() : "N/A";
-        if (priceElement != null) {
-          price = priceElement.text.trim();
-          double originalPrice = double.tryParse(price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0;
-          double discountPrice = originalPrice * 0.9;
-          priceDiscount = "₹${discountPrice.toStringAsFixed(2)}";
-        } else {
-          price = "N/A";
-          priceDiscount = "N/A";
-        }
-        productDescription = descriptionElement != null ? descriptionElement.text.trim() : "N/A";
-        productImg = imageElement != null ? imageElement.attributes['src'] ?? "N/A" : "N/A";
-      });
-    } else {
-      setState(() {
-        productName = "Failed to load product.";
-        price = "N/A";
-        productDescription= "";
-        productImg = "";
-        priceDiscount = "";
-      });
-    }
-  }
+    this.price,
+    this.isFree = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldColor,
       appBar: AppBar(
-        title: const Text('Product Details'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite_border),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {},
-          ),
-        ],
+        title: const Text("Chi tiết món đồ"),
+        backgroundColor: AppColors.primaryColor,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image Carousel
-            SizedBox(
-              height: 300,
-              child: PageView(
-                children: [
-                  Image.network(
-                    productImg,
-                       fit: BoxFit.cover,
-                  ),
-                 
-                ],
-              ),
+      body: Column(
+        children: [
+          Image.network(ServerAddress.serverAddress + image, height: 200, width: double.infinity, fit: BoxFit.cover),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
-            const SizedBox(height: 10),
-
-            // Product Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                productName, // Sử dụng tên sản phẩm đã lấy được
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Product Ratings and Price
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            //   child: Row(
-            //     children: [
-            //       Container(
-            //         padding:
-            //             const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            //         decoration: BoxDecoration(
-            //           color: Colors.green,
-            //           borderRadius: BorderRadius.circular(4),
-            //         ),
-            //         child: const Text(
-            //           '4.2 ★', // Placeholder for rating
-            //           style: TextStyle(color: Colors.white),
-            //         ),
-            //       ),
-            //       const SizedBox(width: 10),
-            //       const Text(
-            //         '1,245 Ratings & 150 Reviews',
-            //         style: TextStyle(color: Colors.grey, fontSize: 14),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            const SizedBox(height: 8),
-
-            // Price
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Text(
-                    price, // Hiển thị giá đã lấy được
-                     style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                   
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    priceDiscount, // Placeholder for original price
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  const Text(
-                    '10% off',
-                    style: TextStyle(fontSize: 16, color: Colors.green),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Product Description
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: const Text(
-                'Product Description',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                productDescription, // Hiển thị mô tả sản phẩm đã lấy được
-                style: const TextStyle(fontSize: 16),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Add to Cart and Buy Now Buttons
-            Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Expanded(
-                //   child: Container(
-                //     margin: const EdgeInsets.all(8.0),
-                //     child: ElevatedButton(
-                //       onPressed: () {},
-                //       style: ElevatedButton.styleFrom(
-                //         backgroundColor: Colors.orange,
-                //         padding: const EdgeInsets.all(16),
-                //       ),
-                //       child: const Text(
-                //         'ADD TO CART',
-                //         style: TextStyle(fontSize: 16),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PaymentScreen(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.all(16),
-                      ),
-                      child: const Text(
-                        'BUY NOW',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
+                Text(title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Text(location, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 12),
+                Text(
+                  isFree ? '🎁 Miễn phí' : '💰 $price',
+                  style: TextStyle(
+                    color: isFree ? Colors.green : Colors.red,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const CircleAvatar(radius: 24, backgroundImage: AssetImage('assets/icons/users.png')),
+                    const SizedBox(width: 12),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                       Text(userInfo, style: TextStyle(fontWeight: FontWeight.bold)),
+                       Text(location, style: const TextStyle(color: Colors.grey)),
+                    ])
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                        onPressed: () async {
+                          // Logic to call the user phone
+                          print("Calling user...");
+                          var phoneNumber = phone; // Số điện thoại cần gọi
+                            final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            } else {
+                              print('Không thể gọi điện đến số này.');
+                            }
+
+                           
+                        },
+                        child: const Text("Gọi Điện"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        onPressed: () async {
+                          // Logic to view location on map
+                          print("Viewing location on map...");
+                          final Uri url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$gpsLat');
+
+                          if (await canLaunchUrl(url)) {
+                            launchUrl(url);
+                          } else {
+                            print('Không thể mở bản đồ với vị trí này.');
+                          }
+                        },
+                        child: Text( "Xem vị trí" ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
-
-            // Additional Information
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: const Text(
-                'Highlights',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            //   child: const Text(
-            //     '- 1.5 L Capacity\n- Stainless Steel Material\n- Automatic Shut-off\n- Lightweight Design',
-            //     style: TextStyle(fontSize: 16),
-            //   ),
-            // ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

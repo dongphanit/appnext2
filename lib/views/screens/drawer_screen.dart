@@ -8,7 +8,6 @@ import 'package:flutter_tour_app/constant/app_strings.dart';
 import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
 import 'package:flutter_tour_app/controllers/language_controller.dart';
-import 'package:flutter_tour_app/views/drawer_page/faq_screen.dart';
 import 'package:flutter_tour_app/views/drawer_page/privacy_policy_screen.dart';
 import 'package:flutter_tour_app/views/drawer_page/support_screen.dart';
 import 'package:flutter_tour_app/views/widgets/drawer_item.dart';
@@ -33,77 +32,72 @@ class DrawerScreen extends StatelessWidget {
                 height: 10.h,
               ),
               Text(
-               appName,
+               "Kết nối chia sẻ đồ dùng",
                 style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.w500),
               ),
               SizedBox(height: 40.h),
               drawerItem(
-                itemName: 'Support'.tr,
+                itemName: 'Hỗ trợ'.tr,
                 onClick: () => Get.to(() => SupportScreen()),
               ),
               SizedBox(height: 10.h),
               drawerItem(
-                itemName: 'Privacy'.tr,
+                itemName: 'Chính sách'.tr,
                 onClick: () => Get.to(() => PrivacyPolicyScreen()),
               ),
               SizedBox(height: 10.h),
-              drawerItem(
-                itemName: 'Faq'.tr,
-                onClick: () => Get.to(
-                  () => FaqScreen(),
-                ),
-              ),
-              SizedBox(
-                width: 150.w,
-                child: ExpansionTile(
-                  title: Text("Language".tr,style: TextStyle(fontSize: 20.sp),),
-                  tilePadding: EdgeInsets.all(0.0),
-                  childrenPadding: EdgeInsets.all(0.0),
-                  children: [
-                    Obx(() {
-                      return Row(
-                        children: [
-                          Radio(
-                            value: "Bangla",
-                            groupValue: controller.selectedLanguage.value,
-                            onChanged: (value) {
-                              controller.changeLanguage(value);
-                              Get.updateLocale(const Locale('bn', 'BD'));
-                              Localization.setLanguage(Get.locale?.languageCode??"en");
-                            },
-                          ),
-                          Text("Bangla".tr),
-                        ],
-                      );
-                    }),
-                    Obx(() {
-                      return Row(
-                        children: [
-                          Radio(
-                            value: "English",
-                            groupValue: controller.selectedLanguage.value,
-                            onChanged: (value) {
-                              controller.changeLanguage(value);
-                              Get.updateLocale(const Locale('en', 'US'));
-                              Localization.setLanguage(Get.locale?.languageCode??"en");
-                            },
-                          ),
-                          Text("English".tr),
-                        ],
-                      );
-                    }),
-                  ],
-                ),
-              ),
-              Expanded(child: SizedBox()),
-              InkWell(
-                onTap: () => Get.to(() => Settings()),
-                child: Text(
-                  "Settings".tr,
-                  style:
-                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
-                ),
-              )
+           
+              // SizedBox(
+              //   width: 150.w,
+              //   child: ExpansionTile(
+              //     title: Text("Language".tr,style: TextStyle(fontSize: 20.sp),),
+              //     tilePadding: EdgeInsets.all(0.0),
+              //     childrenPadding: EdgeInsets.all(0.0),
+              //     children: [
+              //       Obx(() {
+              //         return Row(
+              //           children: [
+              //             Radio(
+              //               value: "Bangla",
+              //               groupValue: controller.selectedLanguage.value,
+              //               onChanged: (value) {
+              //                 controller.changeLanguage(value);
+              //                 Get.updateLocale(const Locale('bn', 'BD'));
+              //                 Localization.setLanguage(Get.locale?.languageCode??"en");
+              //               },
+              //             ),
+              //             Text("Bangla".tr),
+              //           ],
+              //         );
+              //       }),
+              //       Obx(() {
+              //         return Row(
+              //           children: [
+              //             Radio(
+              //               value: "English",
+              //               groupValue: controller.selectedLanguage.value,
+              //               onChanged: (value) {
+              //                 controller.changeLanguage(value);
+              //                 Get.updateLocale(const Locale('en', 'US'));
+              //                 Localization.setLanguage(Get.locale?.languageCode??"en");
+              //               },
+              //             ),
+              //             Text("English".tr),
+              //           ],
+              //         );
+              //       }),
+              //     ],
+              //   ),
+              // ),
+              // Expanded(child: SizedBox()),
+              // InkWell(
+              //   onTap: () => Get.to(() => Settings()),
+              //   child: Text(
+              //     "Settings".tr,
+              //     style:
+              //         TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
+              //   ),
+              // )
             ],
           ),
         ),

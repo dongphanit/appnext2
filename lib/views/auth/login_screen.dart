@@ -42,16 +42,16 @@ class _SignInScreenState extends State<SignInScreen> {
     super.initState();
   }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && isAlertSet == false) {
-            showDialogBox();
-            setState(() => isAlertSet = true);
-          }
-        } as void Function(List<ConnectivityResult> event)?,
-      );
+  // getConnectivity() =>
+  //     subscription = Connectivity().onConnectivityChanged.listen(
+  //       (ConnectivityResult result) async {
+  //         isDeviceConnected = await InternetConnectionChecker().hasConnection;
+  //         if (!isDeviceConnected && isAlertSet == false) {
+  //           showDialogBox();
+  //           setState(() => isAlertSet = true);
+  //         }
+  //       } as void Function(List<ConnectivityResult> event)?,
+  //     );
 
   @override
   void dispose() {
@@ -71,6 +71,10 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Đăng nhập'),
+        backgroundColor: AppColors.primaryColor,
+      ),
       body: Padding(
         padding: EdgeInsets.only(left: 30.w, right: 30.w),
         child: SingleChildScrollView(
@@ -225,12 +229,12 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: () async {
                 Navigator.pop(context, 'Cancel');
                 setState(() => isAlertSet = false);
-                isDeviceConnected =
-                    await InternetConnectionChecker().hasConnection;
-                if (!isDeviceConnected && isAlertSet == false) {
-                  showDialogBox();
-                  setState(() => isAlertSet = true);
-                }
+                // isDeviceConnected =
+                //     await InternetConnectionChecker().hasConnection;
+                // if (!isDeviceConnected && isAlertSet == false) {
+                //   showDialogBox();
+                //   setState(() => isAlertSet = true);
+                // }
               },
               child: const Text('OK'),
             ),

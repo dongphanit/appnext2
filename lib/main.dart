@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (BuildContext context, Widget? child) {
         return GetMaterialApp(
-          title: appName,
+          title: "Đồ Hay",
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
               primarySwatch: Colors.blue,

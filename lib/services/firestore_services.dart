@@ -9,12 +9,12 @@ class FirestoreServices {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   static const String allOrders = 'orders';
-Future<QuerySnapshot> getOrders({bool available = true}) async {
-  return FirebaseFirestore.instance
-      .collection('orders')
-      .where('availability', isEqualTo: available)
-      .get();
-}
+  Future<QuerySnapshot> getOrders({bool available = true}) async {
+    return FirebaseFirestore.instance
+        .collection('orders')
+        .where('availability', isEqualTo: available)
+        .get();
+  }
 
   // Function to create a new order in Firestore
   Future<String> createOrder({
@@ -38,10 +38,46 @@ Future<QuerySnapshot> getOrders({bool available = true}) async {
     }
   }
 
+  // Create post
+  Future<String> createPost({
+    required String deviceId,
+    required String userInfo,
+    required String category,
+    required String title,
+    required String phone,
+    required String description,
+    required String imageUrl,
+    required String location,
+    required String gpsLat,
+    required double price,
+    required bool isFree,
+  }) async {
+    try {
+      DocumentReference postRef = await _firestore.collection('post').add({
+        'deviceId': deviceId,
+        'userInfo': userInfo,
+        'category': category,
+        'title': title,
+        'phone': phone,
+        'description': description,
+        'imageUrl': imageUrl,
+        'location': location,
+        'price': price,
+        'isFree': isFree,
+        'gpsLat': gpsLat,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      return postRef.id;
+    } catch (e) {
+      throw Exception('Failed to create post: $e');
+    }
+  }
+
   // Function to fetch order details
   Future<Map<String, dynamic>?> getOrderDetails(String orderId) async {
     try {
-      DocumentSnapshot orderSnapshot = await _firestore.collection('orders').doc(orderId).get();
+      DocumentSnapshot orderSnapshot =
+          await _firestore.collection('orders').doc(orderId).get();
       return orderSnapshot.data() as Map<String, dynamic>?;
     } catch (e) {
       throw Exception('Failed to fetch order details: $e');
@@ -85,13 +121,58 @@ Future<QuerySnapshot> getOrders({bool available = true}) async {
   // Function to listen for new orders (for Card Holder)
   Stream<List<Map<String, dynamic>>> listenToOrders() {
     try {
-      return _firestore.collection('orders').snapshots().map((snapshot) =>
-          snapshot.docs.map((doc) => {
-                'id': doc.id,
-                ...doc.data() as Map<String, dynamic>,
-              }).toList());
+      return _firestore
+          .collection('orders')
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => {
+                    'id': doc.id,
+                    ...doc.data() as Map<String, dynamic>,
+                  })
+              .toList());
     } catch (e) {
       throw Exception('Failed to listen to orders: $e');
     }
   }
+
+  // list of all posts
+  Future<List<Map<String, dynamic>>> getAllPosts(int category) async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('post')
+          .where('category', isEqualTo: ['Đồ ăn', 'Quần áo', 'Điện tử', 'Sách', 'Đồ chơi'][category])
+          .limit(20)
+      .get();
+      return snapshot.docs
+          .map((doc) => {
+                'id': doc.id,
+                ...doc.data() as Map<String, dynamic>,
+              })
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch posts: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> searchPosts(String keyword, int category) async {
+  try {
+    
+    QuerySnapshot snapshot = await _firestore.collection('post') .where('category', isEqualTo: ['Đồ ăn', 'Quần áo', 'Điện tử', 'Sách', 'Đồ chơi'][category]).get();
+
+    return snapshot.docs
+        .where((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          final title = data['title']?.toString().toLowerCase() ?? '';
+          return title.contains(keyword.toLowerCase());
+        })
+        .map((doc) => {
+              'id': doc.id,
+              ...doc.data() as Map<String, dynamic>,
+            })
+        .toList();
+  } catch (e) {
+    throw Exception('Failed to search posts: $e');
+  }
+}
+
+
 }

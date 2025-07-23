@@ -1,4 +1,4 @@
-import 'bangla.dart';
+
 import 'english.dart';
 
 class Localization {
@@ -6,9 +6,6 @@ class Localization {
 
   static void setLanguage(String languageCode) {
     switch (languageCode) {
-      case 'bn':
-        _localizedStrings = bangla;
-        break;
       case 'en':
       default:
         _localizedStrings = english;

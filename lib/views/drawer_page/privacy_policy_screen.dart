@@ -16,7 +16,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           title: Text(
-        Localization.translate("privacy_policy").tr,
+        "Chính sách",
         style: TextStyle(fontSize: 25.sp),
       )),
       body: Padding(
@@ -26,46 +26,55 @@ class PrivacyPolicyScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                introEng.tr,
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.justify,
-              ),
-              10.h.heightBox,
-              Text(
-                headingEng.tr,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 20.sp,
-                ),
-              ),
-              15.h.heightBox,
-              customDescriptionText(title: title1Eng, desc: desc1Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title2Eng, desc: desc2Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title3Eng, desc: desc3Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title4Eng, desc: desc4Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title5Eng, desc: desc5Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title6Eng, desc: desc6Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title7Eng, desc: desc7Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title8Eng, desc: desc8Eng),
-              10.h.heightBox,
-              customDescriptionText(title: title8Eng, desc: desc8Eng),
-              10.h.heightBox,
-              Text(
-                conclusionEng.tr,
-                style: TextStyle(color: Colors.black, fontSize: 16.sp),
-                textAlign: TextAlign.justify,
-              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    disputeIntroVie,
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.justify,
+                  ),
+                  10.h.heightBox,
+                  Text(
+                    disputeHeadingVie,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20.sp,
+                    ),
+                  ),
+                  15.h.heightBox,
+                  customDescriptionText(title: "", desc: disputeDetail1Vie),
+                  10.h.heightBox,
+                  customDescriptionText(title: "", desc: disputeDetail2Vie),
+                  20.h.heightBox,
+                  Text(
+                    disputeProcessTitleVie,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18.sp,
+                    ),
+                  ),
+                  15.h.heightBox,
+                  customDescriptionText(title: "", desc: disputeStep1Vie),
+                  10.h.heightBox,
+                  customDescriptionText(title: "", desc: disputeStep2Vie),
+                  10.h.heightBox,
+                  customDescriptionText(title: "", desc: disputeStep3Vie),
+                  20.h.heightBox,
+                  Text(
+                    disputeContactInfoVie,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.sp,
+                    ),
+                    textAlign: TextAlign.justify,
+                  ),
+                ],
+              )
             ],
           ),
         ),
@@ -81,8 +90,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
           title.tr,
           style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
+            fontWeight: FontWeight.w300,
+            fontSize: 13.sp,
           ),
         ),
         5.h.heightBox,
