@@ -1,87 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
-class LocationPickerPage extends StatefulWidget {
+class LocationPickerWebPage extends StatefulWidget {
   @override
-  _LocationPickerPageState createState() => _LocationPickerPageState();
+  _LocationPickerWebPageState createState() => _LocationPickerWebPageState();
 }
 
-class _LocationPickerPageState extends State<LocationPickerPage> {
-  Position? _currentPosition;
-  LatLng? _selectedLocation;
-  GoogleMapController? _mapController;
+class _LocationPickerWebPageState extends State<LocationPickerWebPage> {
+  LatLng? _selectedLocation = LatLng(10.762622, 106.660172); // Default TP.HCM
 
-  Future<void> _getCurrentLocation() async {
-    LocationPermission permission = await Geolocator.requestPermission();
-
-    if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Vui lòng cấp quyền truy cập vị trí trong cài đặt')));
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
+  void _onTap(LatLng latlng) {
     setState(() {
-      _currentPosition = position;
-      _selectedLocation = LatLng(position.latitude, position.longitude);
-      _mapController?.animateCamera(CameraUpdate.newLatLng(_selectedLocation!));
-    });
-  }
-
-  void _onMapTapped(LatLng latLng) {
-    setState(() {
-      _selectedLocation = latLng;
+      _selectedLocation = latlng;
     });
   }
 
   void _confirmLocation() {
     if (_selectedLocation != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Địa điểm đã chọn: $_selectedLocation")),
+        SnackBar(content: Text("Đã chọn: ${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}")),
       );
-      // Gửi _selectedLocation về server hoặc lưu state
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
+    // back
+    Navigator.pop(context, _selectedLocation);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chọn địa điểm lấy hàng")),
+      appBar: AppBar(title: Text("Chọn địa điểm")),
       body: Column(
         children: [
           Expanded(
-            child: _selectedLocation == null
-                ? Center(child: CircularProgressIndicator())
-                : GoogleMap(
-                    onMapCreated: (controller) => _mapController = controller,
-                    initialCameraPosition: CameraPosition(
-                      target: _selectedLocation!,
-                      zoom: 16,
-                    ),
-                    onTap: _onMapTapped,
-                    markers: {
+            child: FlutterMap(
+              options: MapOptions(
+                center: _selectedLocation,
+                zoom: 15,
+                onTap: (_, latlng) => _onTap(latlng),
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  subdomains: ['a', 'b', 'c'],
+                ),
+                if (_selectedLocation != null)
+                  MarkerLayer(
+                    markers: [
                       Marker(
-                        markerId: MarkerId("picked"),
-                        position: _selectedLocation!,
-                      )
-                    },
+                        point: _selectedLocation!,
+                         child: Icon(Icons.location_pin, color: Colors.red, size: 40),
+                      ),
+                    ],
                   ),
+              ],
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: ElevatedButton.icon(
               onPressed: _confirmLocation,
               icon: Icon(Icons.check),
-              label: Text("Xác nhận địa điểm"),
+              label: Text("Xác nhận vị trí"),
             ),
           ),
         ],

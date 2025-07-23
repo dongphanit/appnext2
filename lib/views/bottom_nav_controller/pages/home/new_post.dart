@@ -16,6 +16,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 
+import 'package:latlong2/latlong.dart';
+
 class PostItemPage extends StatefulWidget {
   const PostItemPage({super.key});
 
@@ -202,294 +204,281 @@ class _PostItemPageState extends State<PostItemPage> {
       return 'unsupported-platform';
     }
   }
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Đăng món đồ'),
-      backgroundColor: AppColors.primaryColor,
-    ),
-    body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            Container(
-              height: 180,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.textFormColor, width: 1.5),
-              ),
-              child: Center(
-                child: TextButton.icon(
-                  onPressed: _pickImageWebCompatible,
-                  icon: const Icon(Icons.camera_alt, color: AppColors.textFormColor),
-                  label: const Text(
-                    "Chọn hình ảnh",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.textFormColor,
-                  ),
-                ),
-              ),
-            ),
 
-            if (imageUrl.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  ServerAddress.serverAddress + imageUrl,
-                  height: 150,
-                  fit: BoxFit.cover,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Đăng món đồ'),
+        backgroundColor: AppColors.primaryColor,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              Container(
+                height: 180,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(12),
+                  border:
+                      Border.all(color: AppColors.textFormColor, width: 1.5),
                 ),
+                child: Center(
+                  child: TextButton.icon(
+                    onPressed: _pickImageWebCompatible,
+                    icon: const Icon(Icons.camera_alt,
+                        color: AppColors.textFormColor),
+                    label: const Text(
+                      "Chọn hình ảnh",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.textFormColor,
+                    ),
+                  ),
+                ),
+              ),
+              if (imageUrl.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    ServerAddress.serverAddress + imageUrl,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 20),
+              const Text(
+                'Thông tin người đăng',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textFormIconColor,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildTextField(
+                label: 'Tên người đăng',
+                onChanged: (value) => setState(() => userInfo = value),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Thông tin món đồ',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textFormIconColor,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildTextField(
+                label: 'Tên món đồ',
+                onChanged: (value) => setState(() => title = value),
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'Địa điểm',
+                onChanged: (value) => setState(() => location = value),
+              ),
+              const SizedBox(height: 12),
+              TextButton.icon(
+                onPressed: () async {
+                  final LatLng? selectedLocation =
+                      await Get.to(() => LocationPickerWebPage());
+                  if (selectedLocation != null) {
+                    setState(() {
+                      gpsLat =
+                          "${selectedLocation.latitude}, ${selectedLocation.longitude}";
+                      // location = "(${selectedLocation.latitude}, ${selectedLocation.longitude})";
+                    });
+                  }
+                },
+                icon: const Icon(Icons.location_on_outlined,
+                    color: AppColors.textFormColor),
+                label: const Text('Chọn vị trí'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.textFormColor,
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                decoration: _inputDecoration(label: 'Danh mục'),
+                value: category,
+                items: ['Đồ ăn', 'Quần áo', 'Điện tử', 'Sách', 'Đồ chơi']
+                    .map((label) =>
+                        DropdownMenuItem(value: label, child: Text(label)))
+                    .toList(),
+                onChanged: (value) => setState(() => category = value!),
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'Mô tả',
+                maxLines: 3,
+                onChanged: (value) => setState(() => description = value),
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'Số điện thoại',
+                keyboardType: TextInputType.phone,
+                maxLines: 1,
+                onChanged: (value) => setState(() => phone = value),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                decoration: _inputDecoration(label: 'Hình thức'),
+                value: mode,
+                items: ['Cho miễn phí', 'Bán giá rẻ']
+                    .map((label) =>
+                        DropdownMenuItem(value: label, child: Text(label)))
+                    .toList(),
+                onChanged: (value) => setState(() => mode = value!),
+              ),
+              const SizedBox(height: 16),
+              if (mode == 'Bán giá rẻ')
+                TextFormField(
+                  controller: _controller,
+                  keyboardType: TextInputType.number,
+                  decoration: _inputDecoration(label: 'Giá tiền (VND)'),
+                  onChanged: (value) {
+                    String formatted = _formatNumber(value);
+                    if (formatted != _controller.text) {
+                      _controller.value = TextEditingValue(
+                        text: formatted,
+                        selection:
+                            TextSelection.collapsed(offset: formatted.length),
+                      );
+                    }
+                    setState(() {
+                      price = formatted;
+                      isFree = false;
+                    });
+                  },
+                ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.textFormColor,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                onPressed: _submitForm,
+                child: const Text('Đăng bài'),
               ),
             ],
-
-            const SizedBox(height: 20),
-            const Text(
-              'Thông tin người đăng',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textFormIconColor,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _buildTextField(
-              label: 'Tên người đăng',
-              onChanged: (value) => setState(() => userInfo = value),
-            ),
-
-            const SizedBox(height: 16),
-            const Text(
-              'Thông tin món đồ',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textFormIconColor,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _buildTextField(
-              label: 'Tên món đồ',
-              onChanged: (value) => setState(() => title = value),
-            ),
-            const SizedBox(height: 16),
-
-            _buildTextField(
-              label: 'Địa điểm',
-              onChanged: (value) => setState(() => location = value),
-            ),
-
-            const SizedBox(height: 12),
-            TextButton.icon(
-              onPressed: () async {
-                await Get.to(() => LocationPickerPage());
-                String? selectedLocation = Get.arguments?['location'];
-                if (selectedLocation != null) {
-                  setState(() {
-                    gpsLat = selectedLocation;
-                    location = selectedLocation; // Cập nhật địa điểm nếu muốn
-                  });
-                }
-              },
-              icon: const Icon(Icons.location_on_outlined, color: AppColors.textFormColor),
-              label: const Text('Chọn vị trí'),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.textFormColor, textStyle: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            DropdownButtonFormField<String>(
-              decoration: _inputDecoration(label: 'Danh mục'),
-              value: category,
-              items: ['Đồ ăn', 'Quần áo', 'Điện tử', 'Sách', 'Đồ chơi']
-                  .map((label) =>
-                      DropdownMenuItem(value: label, child: Text(label)))
-                  .toList(),
-              onChanged: (value) => setState(() => category = value!),
-            ),
-
-            const SizedBox(height: 16),
-
-            _buildTextField(
-              label: 'Mô tả',
-              maxLines: 3,
-              onChanged: (value) => setState(() => description = value),
-            ),
-
-            const SizedBox(height: 16),
-
-            _buildTextField(
-              label: 'Số điện thoại',
-              keyboardType: TextInputType.phone,
-              maxLines: 1,
-              onChanged: (value) => setState(() => phone = value),
-            ),
-
-            const SizedBox(height: 16),
-
-            DropdownButtonFormField<String>(
-              decoration: _inputDecoration(label: 'Hình thức'),
-              value: mode,
-              items: ['Cho miễn phí', 'Bán giá rẻ']
-                  .map((label) =>
-                      DropdownMenuItem(value: label, child: Text(label)))
-                  .toList(),
-              onChanged: (value) => setState(() => mode = value!),
-            ),
-
-            const SizedBox(height: 16),
-
-            if (mode == 'Bán giá rẻ')
-              TextFormField(
-                controller: _controller,
-                keyboardType: TextInputType.number,
-                decoration: _inputDecoration(label: 'Giá tiền (VND)'),
-                onChanged: (value) {
-                  String formatted = _formatNumber(value);
-                  if (formatted != _controller.text) {
-                    _controller.value = TextEditingValue(
-                      text: formatted,
-                      selection:
-                          TextSelection.collapsed(offset: formatted.length),
-                    );
-                  }
-                  setState(() {
-                    price = formatted;
-                    isFree = false;
-                  });
-                },
-              ),
-
-            const SizedBox(height: 24),
-
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.textFormColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              onPressed: _submitForm,
-              child: const Text('Đăng bài'),
-            ),
-          ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
-Widget _buildTextField({
-  required String label,
-  TextInputType keyboardType = TextInputType.text,
-  int maxLines = 1,
-  required ValueChanged<String> onChanged,
-}) {
-  return TextFormField(
-    keyboardType: keyboardType,
-    maxLines: maxLines,
-    decoration: _inputDecoration(label: label),
-    onChanged: onChanged,
-  );
-}
-
-InputDecoration _inputDecoration({required String label}) {
-  return InputDecoration(
-    labelText: label,
-    labelStyle: const TextStyle(color: AppColors.textFormColor),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.textFormColor, width: 2),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: AppColors.textFormColor, width: 1.5),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Colors.red, width: 1.5),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Colors.red, width: 2),
-    ),
-  );
-}
-
-void _submitForm() {
-  if (!_formKey.currentState!.validate()) return;
-
-  if (title.isEmpty ||
-      description.isEmpty ||
-      phone.isEmpty ||
-      location.isEmpty ||
-      gpsLat.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
     );
-    return;
-  }
-  if (imageUrl.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Vui lòng chọn hình ảnh')),
-    );
-    return;
-  }
-  if (mode == 'Cho miễn phí') {
-    price = '0';
-    isFree = true;
-  } else {
-    isFree = false;
-  }
-  if (phone.isNotEmpty && !RegExp(r'^\d{10,11}$').hasMatch(phone)) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Số điện thoại không hợp lệ')),
-    );
-    return;
-  }
-  if (price.isNotEmpty && !RegExp(r'^\d+(\.\d{1,2})?$').hasMatch(price)) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Giá tiền không hợp lệ')),
-    );
-    return;
-  }
-  if (gpsLat.isEmpty ||
-      !RegExp(r'^-?\d{1,3}\.\d+,\s*-?\d{1,3}\.\d+$').hasMatch(gpsLat)) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Vị trí GPS không hợp lệ')),
-    );
-    return;
   }
 
-  FirestoreServices().createPost(
-    deviceId: deviceId,
-    userInfo: userInfo,
-    category: category,
-    title: title,
-    phone: phone,
-    description: description,
-    imageUrl: imageUrl,
-    location: location,
-    price: double.tryParse(price) ?? 0.0,
-    isFree: isFree,
-    gpsLat: gpsLat,
-  );
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Đăng bài thành công!')),
-  );
-  Get.back();
-}
+  Widget _buildTextField({
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+    required ValueChanged<String> onChanged,
+  }) {
+    return TextFormField(
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      decoration: _inputDecoration(label: label),
+      onChanged: onChanged,
+    );
+  }
 
+  InputDecoration _inputDecoration({required String label}) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: AppColors.textFormColor),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: AppColors.textFormColor, width: 2),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: AppColors.textFormColor, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.red, width: 2),
+      ),
+    );
+  }
+
+  void _submitForm() {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (title.isEmpty ||
+        description.isEmpty ||
+        phone.isEmpty ||
+        location.isEmpty ||
+        gpsLat.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
+      );
+      return;
+    }
+    if (imageUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng chọn hình ảnh')),
+      );
+      return;
+    }
+    if (mode == 'Cho miễn phí') {
+      price = '0';
+      isFree = true;
+    } else {
+      isFree = false;
+    }
+    if (phone.isNotEmpty && !RegExp(r'^\d{10,11}$').hasMatch(phone)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Số điện thoại không hợp lệ')),
+      );
+      return;
+    }
+    if (price.isNotEmpty && !RegExp(r'^\d+(\.\d{1,2})?$').hasMatch(price)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Giá tiền không hợp lệ')),
+      );
+      return;
+    }
+    if (gpsLat.isEmpty ||
+        !RegExp(r'^-?\d{1,3}\.\d+,\s*-?\d{1,3}\.\d+$').hasMatch(gpsLat)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vị trí GPS không hợp lệ')),
+      );
+      return;
+    }
+
+    FirestoreServices().createPost(
+      deviceId: deviceId,
+      userInfo: userInfo,
+      category: category,
+      title: title,
+      phone: phone,
+      description: description,
+      imageUrl: imageUrl,
+      location: location,
+      price: double.tryParse(price) ?? 0.0,
+      isFree: isFree,
+      gpsLat: gpsLat,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Đăng bài thành công!')),
+    );
+    Get.back();
+  }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_tour_app/views/bottom_nav_controller/pages/home/upload.d
 import 'package:geolocator/geolocator.dart'; // Firestore package
 
 import 'package:geolocator/geolocator.dart';
+
 class ChoLangHomePage extends StatefulWidget {
   const ChoLangHomePage({super.key});
 
@@ -114,7 +115,7 @@ class _ChoLangHomePageState extends State<ChoLangHomePage> {
                     title: post['title'] ?? 'Không có tiêu đề',
                     location: post['location'] ?? 'Không rõ địa điểm',
                     isFree: post['isFree'] ?? false,
-                    price: post['price'].toString() ?? '0', 
+                    price: post['price'].toString() ?? '0',
                     gpsLat: '${post['gpsLat'] ?? ''}',
                   ),
                 );
@@ -132,7 +133,7 @@ class _ChoLangHomePageState extends State<ChoLangHomePage> {
 
     return Container(
       margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color:
             index == categoryIndex ? Colors.grey.shade100 : Colors.transparent,
@@ -175,99 +176,131 @@ class _ChoLangHomePageState extends State<ChoLangHomePage> {
     );
   }
 
-Future<double?> calculateDistanceFromUser(String gpsLat) async {
-  try {
-    // Lấy vị trí hiện tại
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+  Future<double?> calculateDistanceFromUser(String gpsLat) async {
+    try {
+      // Lấy vị trí hiện tại
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
-    // Tách tọa độ bài đăng
-    List<String> parts = gpsLat.split(',');
-    double lat = double.parse(parts[0].trim());
-    double lng = double.parse(parts[1].trim());
+      // Tách tọa độ bài đăng
+      List<String> parts = gpsLat.split(',');
+      double lat = double.parse(parts[0].trim());
+      double lng = double.parse(parts[1].trim());
 
-    // Tính khoảng cách
-    double distanceInMeters = Geolocator.distanceBetween(
-      position.latitude,
-      position.longitude,
-      lat,
-      lng,
-    );
+      // Tính khoảng cách
+      double distanceInMeters = Geolocator.distanceBetween(
+        position.latitude,
+        position.longitude,
+        lat,
+        lng,
+      );
 
-    return distanceInMeters / 1000; // đổi sang km
-  } catch (e) {
-    print('Lỗi khi tính khoảng cách: $e');
-    return null;
+      return distanceInMeters / 1000; // đổi sang km
+    } catch (e) {
+      print('Lỗi khi tính khoảng cách: $e');
+      return null;
+    }
   }
-}
 
   Widget _buildItemCard({
-    required String image,
-    required String title,
-    required String location,
-    required String gpsLat,
-    required bool isFree,
-    String? price,
-  }) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  required String image,
+  required String title,
+  required String location,
+  required String gpsLat,
+  required bool isFree,
+  String? price,
+}) {
+  return Card(
+    elevation: 3,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    child: Container(
+      padding: const EdgeInsets.all(8),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius:
-                const BorderRadius.horizontal(left: Radius.circular(12)),
-            child: Image.network(ServerAddress.serverAddress + image,
-                width: 80, height: 80, fit: BoxFit.contain),
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              ServerAddress.serverAddress + image,
+              width: 90,
+              height: 90,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: 90,
+                height: 90,
+                color: Colors.grey[200],
+                child: const Icon(Icons.image_not_supported),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 6),
-                  Text(location, style: const TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 6),
-                  // Tính khoảng cách từ vị trí hiện tại
-                  // Giả sử gpsLat là vĩ độ, bạn có thể thêm logic để tính khoảng cách nếu cần
-                 FutureBuilder<double?>(
-  future: calculateDistanceFromUser(gpsLat),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const SizedBox(); // hoặc CircularProgressIndicator nhỏ
-    }
-
-    if (snapshot.hasData) {
-      return Text(
-        'Khoảng cách: ${snapshot.data!.toStringAsFixed(2)} km',
-        style: const TextStyle(color: Colors.grey, fontSize: 12),
-      );
-    }
-
-    return const Text(
-      'Không rõ khoảng cách',
-      style: TextStyle(color: Colors.grey),
-    );
-  },
-),
-                  const SizedBox(height: 6),
-                  Text(
-                    isFree ? '🎁 Miễn phí' : '💰 $price',
-                    style: TextStyle(
-                      color: isFree ? Colors.green : Colors.red,
-                      fontWeight: FontWeight.w600,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, color: Colors.grey, size: 14),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        location,
+                        style: const TextStyle(color: Colors.grey, fontSize: 13),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  )
-                ],
-              ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                FutureBuilder<double?>(
+                  future: calculateDistanceFromUser(gpsLat),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(height: 16);
+                    }
+                    if (snapshot.hasData) {
+                      return Text(
+                        '📍 ${snapshot.data!.toStringAsFixed(2)} km',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
+                      );
+                    }
+                    return const Text(
+                      'Khoảng cách không rõ',
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    );
+                  },
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  isFree ? '🎁 Miễn phí' : '💰 ${price ?? 'Đang cập nhật'}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isFree ? Colors.green : Colors.orange[800],
+                  ),
+                )
+              ],
             ),
-          )
+          ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

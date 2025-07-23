@@ -106,48 +106,117 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
               itemCount: posts.length,
               itemBuilder: (context, index) {
                 final data = posts[index].data() as Map<String, dynamic>;
-
                 return Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  elevation: 3,
                   margin:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: ListTile(
-                    leading: data['imageUrl'] != null
-                        ? Image.network(
-                            ServerAddress.serverAddress + data['imageUrl'],
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          )
-                        : const Icon(Icons.image),
-                    title: Text(data['title'] ?? 'Không có tiêu đề'),
-                    trailing: PopupMenuButton<String>(
-                      onSelected: (value) {
-                        _updatePostStatus(posts[index].id, value);
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                            value: 'available', child: Text('Đang bán')),
-                        const PopupMenuItem(
-                            value: 'sold', child: Text('Đã bán')),
-                        const PopupMenuItem(value: 'hidden', child: Text('Ẩn')),
+                    contentPadding: const EdgeInsets.all(12),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: data['imageUrl'] != null
+                          ? Image.network(
+                              ServerAddress.serverAddress + data['imageUrl'],
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.broken_image, size: 60),
+                            )
+                          : Container(
+                              width: 60,
+                              height: 60,
+                              color: Colors.grey[200],
+                              child: const Icon(Icons.image,
+                                  size: 32, color: Colors.grey),
+                            ),
+                    ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            data['title'] ?? 'Không có tiêu đề',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        PopupMenuButton<String>(
+                          onSelected: (value) {
+                            _updatePostStatus(posts[index].id, value);
+                          },
+                          itemBuilder: (context) => const [
+                            PopupMenuItem(
+                                value: 'available', child: Text('Đang bán')),
+                            PopupMenuItem(value: 'sold', child: Text('Đã bán')),
+                            PopupMenuItem(value: 'hidden', child: Text('Ẩn')),
+                          ],
+                          icon: const Icon(Icons.more_vert),
+                        ),
                       ],
-                      icon: const Icon(Icons.more_vert),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(data['description'] ?? ''),
-                        Text(
-                          data['price'] != null ? '${data['price']} đ' : '',
-                          style: const TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
+                        const SizedBox(height: 6),
+                        if ((data['description'] ?? '').toString().isNotEmpty)
+                          Text(
+                            data['description'],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.black87),
+                          ),
+                        const SizedBox(height: 4),
+                        if (data['price'] != null &&
+                            data['price'].toString().isNotEmpty)
+                          Text(
+                            '${data['price']} đ',
+                            style: const TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        const SizedBox(height: 4),
+                        if (data['location'] != null)
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on,
+                                  size: 14, color: Colors.grey),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  data['location'],
+                                  style: const TextStyle(color: Colors.grey),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.info_outline,
+                                size: 14, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Text(
+                              data['status'] == 'available'
+                                  ? 'Đang bán'
+                                  : data['status'] == 'sold'
+                                      ? 'Đã bán'
+                                      : 'Ẩn',
+                              style: TextStyle(
+                                color: data['status'] == 'available'
+                                    ? Colors.green
+                                    : data['status'] == 'sold'
+                                        ? Colors.red
+                                        : Colors.grey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(data['location'] ?? ''),
-                        Text(data['status'] == 'available'
-                            ? 'Đang bán'
-                            : data['status'] == "sold"
-                                ? 'Đã bán'
-                                : "Ẩn")
                       ],
                     ),
                     isThreeLine: true,
