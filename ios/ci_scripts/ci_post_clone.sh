@@ -21,7 +21,10 @@ HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew's automatic updates.
 brew install cocoapods
 
 # Install CocoaPods dependencies.
-cd ios && pod repo update
-pod install # run `pod install` in the `ios` directory.
-
+cd ios && pod install # run `pod install` in the `ios` directory.
+xcodebuild -resolvePackageDependencies \
+  -workspace Runner.xcworkspace \
+  -scheme Runner \
+  -derivedDataPath /Volumes/workspace/DerivedData \
+  -hideShellScriptEnvironment
 exit 0
