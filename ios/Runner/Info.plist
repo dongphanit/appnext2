@@ -24,6 +24,17 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Chợ Thường cần quyền truy cập vào thư viện ảnh của bạn để lưu và quản lý hình ảnh.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Chợ Thường cần quyền truy cập vào camera của bạn để chụp ảnh và quét mã vạch.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Chợ Thường cần quyền truy cập vào vị trí của bạn để cung cấp các dịch vụ liên quan đến vị trí.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Chợ Thường cần quyền truy cập vào vị trí của bạn để cung cấp các dịch vụ liên quan đến vị trí.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Chợ Thường cần quyền truy cập vào vị trí của bạn để cung cấp các dịch vụ liên quan đến vị trí.</string>
+	
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
