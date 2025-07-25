@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tour_app/localization/localization.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 import '../../constant/app_strings.dart';
 
@@ -36,7 +35,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.justify,
                   ),
-                  10.h.heightBox,
+
                   Text(
                     disputeHeadingVie,
                     style: TextStyle(
@@ -45,11 +44,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
                       fontSize: 20.sp,
                     ),
                   ),
-                  15.h.heightBox,
                   customDescriptionText(title: "", desc: disputeDetail1Vie),
-                  10.h.heightBox,
                   customDescriptionText(title: "", desc: disputeDetail2Vie),
-                  20.h.heightBox,
                   Text(
                     disputeProcessTitleVie,
                     style: TextStyle(
@@ -58,13 +54,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
                       fontSize: 18.sp,
                     ),
                   ),
-                  15.h.heightBox,
                   customDescriptionText(title: "", desc: disputeStep1Vie),
-                  10.h.heightBox,
                   customDescriptionText(title: "", desc: disputeStep2Vie),
-                  10.h.heightBox,
                   customDescriptionText(title: "", desc: disputeStep3Vie),
-                  20.h.heightBox,
                   Text(
                     disputeContactInfoVie,
                     style: TextStyle(
@@ -94,7 +86,6 @@ class PrivacyPolicyScreen extends StatelessWidget {
             fontSize: 13.sp,
           ),
         ),
-        5.h.heightBox,
         Padding(
           padding: EdgeInsets.only(left: 20.w),
           child: Text(
