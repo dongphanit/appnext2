@@ -24,7 +24,6 @@ void main() async {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   runApp(App());
-  FirestoreServices().deleteAllPosts();
 }
 
 ThemeManager themeManager = ThemeManager(ThemeMode.light);
