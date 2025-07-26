@@ -447,12 +447,7 @@ class _PostItemPageState extends State<PostItemPage> {
       );
       return;
     }
-    if (price.isNotEmpty && !RegExp(r'^\d+(\.\d{1,2})?$').hasMatch(price)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Giá tiền không hợp lệ')),
-      );
-      return;
-    }
+    
     if (gpsLat.isEmpty ||
         !RegExp(r'^-?\d{1,3}\.\d+,\s*-?\d{1,3}\.\d+$').hasMatch(gpsLat)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -470,7 +465,7 @@ class _PostItemPageState extends State<PostItemPage> {
       description: description,
       imageUrl: imageUrl,
       location: location,
-      price: double.tryParse(price) ?? 0.0,
+      price: price,
       isFree: isFree,
       gpsLat: gpsLat,
     );

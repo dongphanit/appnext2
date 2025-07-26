@@ -50,7 +50,7 @@ class FirestoreServices {
     required String imageUrl,
     required String location,
     required String gpsLat,
-    required double price,
+    required String price,
     required bool isFree,
   }) async {
     try {
@@ -138,6 +138,49 @@ class FirestoreServices {
       throw Exception('Failed to listen to orders: $e');
     }
   }
+
+Future<void> deleteAllPosts() async {
+  try {
+    // Lấy tất cả document trong collection 'post'
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('post').get();
+
+    // Duyệt qua từng document và xoá
+    for (DocumentSnapshot doc in snapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    print('Đã xoá tất cả các bài post.');
+  } catch (e) {
+    print('Lỗi khi xoá bài post: $e');
+    throw Exception('Failed to delete all posts: $e');
+  }
+}
+Future<void> deleteAllPostsBatch() async {
+  final firestore = FirebaseFirestore.instance;
+  const batchSize = 100;
+
+  try {
+    while (true) {
+      QuerySnapshot snapshot = await firestore
+          .collection('post')
+          .limit(batchSize)
+          .get();
+
+      if (snapshot.docs.isEmpty) break;
+
+      WriteBatch batch = firestore.batch();
+      for (var doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    }
+
+    print('Đã xoá toàn bộ post theo batch.');
+  } catch (e) {
+    print('Lỗi xoá batch: $e');
+    throw Exception('Failed to delete posts in batch: $e');
+  }
+}
 
   // list of all posts
   Future<List<Map<String, dynamic>>> getAllPosts(int category) async {
