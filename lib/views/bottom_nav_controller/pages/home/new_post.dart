@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,7 +34,7 @@ class _PostItemPageState extends State<PostItemPage> {
   String userInfo = '';
   String mode = 'Cho miễn phí';
   String location = '';
-  String gpsLat = '15.80896740868602, 108.3942308977846';
+  String gpsLat = '';
   String title = '';
   String description = '';
   String phone = '';
@@ -51,6 +53,12 @@ class _PostItemPageState extends State<PostItemPage> {
       });
     });
     _controller.text = price;
+    _getLocation(); // Lấy vị trí hiện tại khi khởi tạo
+    if (gpsLat.isNotEmpty)
+                  _getAddressFromLatLng(
+                    double.parse(gpsLat.split(',')[0]),
+                    double.parse(gpsLat.split(',')[1]),
+                  );
   }
 
   final _controller = TextEditingController();
@@ -63,6 +71,45 @@ class _PostItemPageState extends State<PostItemPage> {
     super.dispose();
   }
 
+  Future<void> _getLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        gpsLat = '';
+      });
+      return;
+    }
+
+    // Check for permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          gpsLat = '';
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      setState(() {
+        gpsLat = '';
+      });
+      return;
+    }
+
+    // Get current location
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      gpsLat = '${position.latitude}, ${position.longitude}';
+    });
+  }
   String _formatNumber(String s) {
     if (s.isEmpty) return '';
     // Xóa tất cả ký tự không phải số
@@ -202,6 +249,26 @@ class _PostItemPageState extends State<PostItemPage> {
       return 'unsupported-platform';
     }
   }
+  
+Future<void> _getAddressFromLatLng(double lat, double lng) async {
+  try {
+    List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+    print("Placemark: $placemarks");
+    if (placemarks.isNotEmpty) {
+      final Placemark place = placemarks[0];
+      final address = '${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}';
+      setState(() {
+        location = address;
+      
+      });
+      print("Address: $address");
+    } else {
+      print("No address found.");
+    }
+  } catch (e) {
+    print("Error: $e");
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -278,31 +345,35 @@ class _PostItemPageState extends State<PostItemPage> {
                 label: 'Tên món đồ',
                 onChanged: (value) => setState(() => title = value),
               ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                label: 'Địa điểm',
-                onChanged: (value) => setState(() => location = value),
-              ),
+            
               const SizedBox(height: 12),
               TextButton.icon(
                 onPressed: () async {
-                  final LatLng? selectedLocation =
-                      await Get.to(() => LocationPickerWebPage());
-                  if (selectedLocation != null) {
-                    setState(() {
-                      gpsLat =
-                          "${selectedLocation.latitude}, ${selectedLocation.longitude}";
-                      // location = "(${selectedLocation.latitude}, ${selectedLocation.longitude})";
-                    });
+                  _getLocation();
+                  if (gpsLat.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Vui lòng bật GPS')),
+                    );
+                    return;
                   }
+                  _getAddressFromLatLng(
+                    double.parse(gpsLat.split(',')[0]),
+                    double.parse(gpsLat.split(',')[1]),
+                  );
+
                 },
                 icon: const Icon(Icons.location_on_outlined,
                     color: AppColors.textFormColor),
-                label: const Text('Chọn vị trí'),
+                label: const Text('Vị trí của bạn'),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.textFormColor,
                   textStyle: const TextStyle(fontWeight: FontWeight.w600),
                 ),
+              ),
+                const SizedBox(height: 16),
+              _buildTextField(
+                label: 'Địa điểm',
+                onChanged: (value) => setState(() => location = value),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(

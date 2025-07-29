@@ -106,7 +106,8 @@ class _ChoLangHomePageState extends State<ChoLangHomePage> {
                           price: post['price'].toString() ?? '0',
                           image: post['imageUrl'] ?? '',
                           userInfo: post["userInfo"],
-                          avatar: post["avatar"], description: post["description"], // Placeholder image
+                          avatar: post["avatar"],
+                          description: post["description"], // Placeholder image
                         ),
                       ),
                     );

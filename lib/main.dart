@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tour_app/services/firestore_services.dart';
+import 'package:flutter_tour_app/views/screens/home_screen.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constant/app_colors.dart';
@@ -85,7 +86,7 @@ class MyApp extends StatelessWidget {
 
           // !-----------splash screen-----------------
 
-          home: SplashScreen(),
+          home: HomeScreen(),
           // home: Home(),
         );
       },
