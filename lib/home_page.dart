@@ -110,7 +110,7 @@ class _MainTabControllerState extends State<MainTabController> {
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.book, color: Colors.green),
+            icon: Icon(Icons.library_books, color: Colors.green),
             label: 'Lịch Nhắc nhở',
             backgroundColor: Colors.white,
           ),

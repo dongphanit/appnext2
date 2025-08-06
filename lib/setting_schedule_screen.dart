@@ -29,7 +29,9 @@ class DatabaseService {
 
     // Check if the schedule already exists
     final existingIndex = currentList.indexWhere(
-      (schedule) => schedule.dayOfWeek == item.dayOfWeek && schedule.period == item.period,
+      (schedule) =>
+          schedule.dayOfWeek == item.dayOfWeek &&
+          schedule.period == item.period,
     );
 
     if (existingIndex != -1) {
@@ -115,12 +117,14 @@ class ReminderService {
     await _notifications.initialize(initSettings);
   }
 
-  static Future<void> scheduleReminder(
-      String subject, TimeOfDay time) async {
-     // NotificationHelper.scheduleWeeklyNotification is not defined, so this line is commented out.
+  static Future<void> scheduleReminder(String subject, TimeOfDay time) async {
+    // NotificationHelper.scheduleWeeklyNotification is not defined, so this line is commented out.
     // Uncomment and implement NotificationHelper if needed.
     final now = DateTime.now();
-    NotificationHelper.scheduleDailyNotification('Đừng quên làm bài tập cho thứ ' + (now.weekday +1).toString(),  time.hour, time.minute);
+    NotificationHelper.scheduleDailyNotification(
+        'Đừng quên làm bài tập cho thứ ' + (now.weekday + 1).toString(),
+        time.hour,
+        time.minute);
     // await _notifications.zonedSchedule(
     //   id,
     //   'Nhắc nhở làm bài tập',
@@ -151,29 +155,28 @@ class SettingScheduleScreen extends StatefulWidget {
 }
 
 class _SettingScheduleScreenState extends State<SettingScheduleScreen> {
- 
-Map<String, IconData> subjectIcons = {
-  'Toán': Icons.calculate,
-  'Ngữ văn': Icons.book,
-  'Tiếng Anh': Icons.language,
-  'Vật lý': Icons.space_dashboard,
-  'Hóa học': Icons.science,
-  'Sinh học': Icons.eco,
-  'Lịch sử': Icons.history_edu,
-  'Địa lý': Icons.public,
-  'Giáo dục công dân': Icons.people,
-  'Tin học': Icons.computer,
-  'Công nghệ': Icons.build,
-  'Thể dục': Icons.sports,
-  'Âm nhạc': Icons.music_note,
-  'Mỹ thuật': Icons.brush,
-  'Tiếng Pháp': Icons.translate,
-  'Tiếng Trung': Icons.translate,
-  'Tiếng Nhật': Icons.translate,
-  'Quốc phòng - An ninh': Icons.security,
-  'Hoạt động trải nghiệm': Icons.explore,
-  'Nghề nghiệp - Hướng nghiệp': Icons.work,
-};
+  Map<String, IconData> subjectIcons = {
+    'Toán': Icons.calculate,
+    'Ngữ văn': Icons.book,
+    'Tiếng Anh': Icons.language,
+    'Vật lý': Icons.space_dashboard,
+    'Hóa học': Icons.science,
+    'Sinh học': Icons.eco,
+    'Lịch sử': Icons.history_edu,
+    'Địa lý': Icons.public,
+    'Giáo dục công dân': Icons.people,
+    'Tin học': Icons.computer,
+    'Công nghệ': Icons.build,
+    'Thể dục': Icons.sports,
+    'Âm nhạc': Icons.music_note,
+    'Mỹ thuật': Icons.brush,
+    'Tiếng Pháp': Icons.translate,
+    'Tiếng Trung': Icons.translate,
+    'Tiếng Nhật': Icons.translate,
+    'Quốc phòng - An ninh': Icons.security,
+    'Hoạt động trải nghiệm': Icons.explore,
+    'Nghề nghiệp - Hướng nghiệp': Icons.work,
+  };
 
   final List<String> days = [
     'Monday',
@@ -196,7 +199,7 @@ Map<String, IconData> subjectIcons = {
   void initState() {
     super.initState();
     // notifi với selectedSession
-       for (var day in days) {
+    for (var day in days) {
       schedule[day] = List.filled(5, null); // 5 tiết mỗi ngày
     }
     _saveReminder();
@@ -248,13 +251,12 @@ Map<String, IconData> subjectIcons = {
   }
 
   void _saveReminder() {
-   if (selectedSession == StudySession.morning) {
-    
+    if (selectedSession == StudySession.morning) {
       ReminderService.scheduleReminder("", afternoonTime);
-      
+
       ReminderService.scheduleReminder("", eveningTime);
     } else if (selectedSession == StudySession.afternoon) {
-        ReminderService.scheduleReminder("", eveningTime);
+      ReminderService.scheduleReminder("", eveningTime);
       ReminderService.scheduleReminder("", nextMorningTime);
     }
     // Notifi lịch nhắc với các môn học đã chọn
@@ -326,41 +328,42 @@ Map<String, IconData> subjectIcons = {
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w500)),
                   if (selectedSession == StudySession.morning) ...[
-                  ListTile(
-  title: Text("Chiều: ${formatTime(afternoonTime)}", style: TextStyle(fontSize: 12)),
-  trailing: Icon(Icons.access_time, size: 16),
-  onTap: () => _pickTime(
-    context,
-    afternoonTime,
-    (val) {
-      // Huỷ notification cũ
-      NotificationHelper.cancelDailyNotification(
-         afternoonTime.hour,
-         afternoonTime.minute,
-      );
-      // Cập nhật thời gian mới
-      setState(() => afternoonTime = val);
-    },
-  ),
-),
-ListTile(
-  title: Text("Tối: ${formatTime(eveningTime)}", style: TextStyle(fontSize: 12)),
-  trailing: Icon(Icons.access_time, size: 16),
-  onTap: () => _pickTime(
-    context,
-    eveningTime,
-    (val) {
-      // Huỷ notification cũ
-      NotificationHelper.cancelDailyNotification(
-         eveningTime.hour,
-         eveningTime.minute,
-      );
-      // Cập nhật thời gian mới
-      setState(() => eveningTime = val);
-    },
-  ),
-),
-
+                    ListTile(
+                      title: Text("Chiều: ${formatTime(afternoonTime)}",
+                          style: TextStyle(fontSize: 12)),
+                      trailing: Icon(Icons.access_time, size: 16),
+                      onTap: () => _pickTime(
+                        context,
+                        afternoonTime,
+                        (val) {
+                          // Huỷ notification cũ
+                          NotificationHelper.cancelDailyNotification(
+                            afternoonTime.hour,
+                            afternoonTime.minute,
+                          );
+                          // Cập nhật thời gian mới
+                          setState(() => afternoonTime = val);
+                        },
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Tối: ${formatTime(eveningTime)}",
+                          style: TextStyle(fontSize: 12)),
+                      trailing: Icon(Icons.access_time, size: 16),
+                      onTap: () => _pickTime(
+                        context,
+                        eveningTime,
+                        (val) {
+                          // Huỷ notification cũ
+                          NotificationHelper.cancelDailyNotification(
+                            eveningTime.hour,
+                            eveningTime.minute,
+                          );
+                          // Cập nhật thời gian mới
+                          setState(() => eveningTime = val);
+                        },
+                      ),
+                    ),
                   ],
                   if (selectedSession == StudySession.afternoon) ...[
                     ListTile(
@@ -391,7 +394,6 @@ ListTile(
             ),
             // add các môn học đã làm bài, khi làm bài xong sẽ tick vào môn đó để hoàn thành
 
-
             // if checkbox is true, will show settingSchedule
             // else will show empty container
             // CheckboxListTile(
@@ -403,7 +405,7 @@ ListTile(
             //     });
             //   },
             // ),
-        settingSchedule(),
+            settingSchedule(),
 
             SizedBox(height: 20),
             // Center(
@@ -515,7 +517,10 @@ ListTile(
 
                                   return InkWell(
                                     onTap: () => _showSubjectPickerWithIcons(
-                                        context, day, period - 1, subjectIcons.keys.toList()),
+                                        context,
+                                        day,
+                                        period - 1,
+                                        subjectIcons.keys.toList()),
                                     child: Container(
                                       padding: EdgeInsets.all(8),
                                       height: 60,
@@ -553,79 +558,81 @@ ListTile(
     );
   }
 
-void _showSubjectPickerWithIcons(BuildContext context, String day, int period, List<String> subjects) {
-  showModalBottomSheet(
-    context: context,
-    builder: (context) => Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      child: ListView(
-        children: subjects
-            .map((subject) => ListTile(
-                  leading: Icon(
-                    subjectIcons[subject] ?? Icons.help_outline,
-                    color: Colors.blue,
-                  ),
-                  title: Text(subject),
-                  onTap: () {
-                    DatabaseService.insertSchedule(
-                      StudySchedule(
-                          dayOfWeek: day, period: period + 1, subject: subject),
-                    );
+  void _showSubjectPickerWithIcons(
+      BuildContext context, String day, int period, List<String> subjects) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: ListView(
+          children: subjects
+              .map((subject) => ListTile(
+                    leading: Icon(
+                      subjectIcons[subject] ?? Icons.help_outline,
+                      color: Colors.blue,
+                    ),
+                    title: Text(subject),
+                    onTap: () {
+                      DatabaseService.insertSchedule(
+                        StudySchedule(
+                            dayOfWeek: day,
+                            period: period + 1,
+                            subject: subject),
+                      );
 
-                    setState(() {
-                      schedule[day]![period] = subject;
-                      final weekday = dayToWeekday[day]!;
-                      final dayDate = getWeekdayOfCurrentWeek(weekday);
+                      setState(() {
+                        schedule[day]![period] = subject;
+                        final weekday = dayToWeekday[day]!;
+                        final dayDate = getWeekdayOfCurrentWeek(weekday);
 
-                      final now = DateTime.now();
-                      final reminderTime = DateTime(
-                          now.year,
-                          now.month,
-                          dayDate.day,
-                          nextMorningTime.hour,
-                          nextMorningTime.minute);
-                      // ReminderService.scheduleReminder(subject, reminderTime);
+                        final now = DateTime.now();
+                        final reminderTime = DateTime(
+                            now.year,
+                            now.month,
+                            dayDate.day,
+                            nextMorningTime.hour,
+                            nextMorningTime.minute);
+                        // ReminderService.scheduleReminder(subject, reminderTime);
 
-                      final reminderTime1 = DateTime(
-                          now.year,
-                          now.month,
-                          dayDate.day,
-                          afternoonTime.hour,
-                          afternoonTime.minute);
-                      // ReminderService.scheduleReminder(subject, reminderTime1);
-                    });
-                    Navigator.pop(context);
-                  },
-                ))
-            .toList(),
-      ),
-    ),
-  );
-}
-
-Widget subjectWithIcon(String subject) {
-  return Row(
-    children: [
-      Icon(
-        subjectIcons[subject] ?? Icons.help_outline,
-        size: 20,
-        color: Colors.blue,
-      ),
-      SizedBox(width: 8),
-      Expanded(
-        child: Text(
-          subject,
-          style: TextStyle(fontSize: 14),
+                        final reminderTime1 = DateTime(
+                            now.year,
+                            now.month,
+                            dayDate.day,
+                            afternoonTime.hour,
+                            afternoonTime.minute);
+                        // ReminderService.scheduleReminder(subject, reminderTime1);
+                      });
+                      Navigator.pop(context);
+                    },
+                  ))
+              .toList(),
         ),
       ),
-    ],
-  );
-}
-}
+    );
+  }
 
+  Widget subjectWithIcon(String subject) {
+    return Row(
+      children: [
+        Icon(
+          subjectIcons[subject] ?? Icons.help_outline,
+          size: 20,
+          color: Colors.blue,
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            subject,
+            style: TextStyle(fontSize: 14),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class DailySettingScheduleScreen extends StatelessWidget {
   final String selectedDay;
